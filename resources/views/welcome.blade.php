@@ -24,16 +24,17 @@
                     
                     <div class="flex items-center space-x-4">
                         @if (Route::has('login'))
-                            @auth
-                                <a href="{{ url('/dashboard') }}" class="text-sm font-medium text-rose-700 hover:text-rose-900 bg-rose-100 px-4 py-2 rounded-full transition">Dashboard</a>
-                            @else
-                                <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-rose-600 transition">Masuk</a>
-                                @if (Route::has('register'))
-                                    <a href="{{ route('register') }}" class="text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-full transition shadow-md shadow-rose-200">Daftar Admin</a>
-                                @endif
-                            @endauth
-                        @endif
-                    </div>
+                    @auth
+                <a href="{{ url('/pelanggan/dashboard') }}" class="text-sm font-medium text-rose-700 hover:text-rose-900 bg-rose-100 px-4 py-2 rounded-full transition">Dashboard</a>
+            @else
+        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-rose-600 transition">Masuk</a>
+        <a href="/login-owner" class="text-sm font-medium text-rose-600 border border-rose-600 hover:bg-rose-50 px-4 py-1.5 rounded-full transition">Owner Area</a>
+    @if (Route::has('register'))
+    <a href="{{ route('register') }}" class="text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-full transition shadow-md shadow-rose-200">Daftar Admin</a>
+@endif
+@endauth
+    @endif
+</div>
                 </div>
             </div>
         </nav>
@@ -95,7 +96,7 @@
                 <p class="text-gray-400 text-sm italic mb-6">"Your beauty, our management priority."</p>
                 <div class="text-gray-500 text-xs leading-loose">
                     &copy; 2026 ITH - Program Studi Ilmu Komputer <br>
-                    Tim Pengembang: Muh Nur Hidayah, Nadia, Nabila, Nur Aini, Alfiana
+                    Tim Pengembang: Muh Nur Hidayah, Nadia Rahma , Nabila Sakinah, Nur Aini, Alfiana Muhsin
                 </div>
             </div>
         </footer>

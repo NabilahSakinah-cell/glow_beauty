@@ -16,14 +16,25 @@ Route::get('/register', [AuthController::class, 'registerForm'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route Dashboard (Hanya bisa diakses kalau sudah Login)
+// --- ROUTE LOGIN OWNER ---
+Route::get('/login-owner', function () {
+    return view('owner.owner'); 
+});
+
+Route::post('/login-owner', [\App\Http\Controllers\OwnerController::class, 'login']);
+
+// --- PINDAHKAN KE SINI (DI LUAR AUTH) ---
+// Halaman utama owner
+Route::get('/owner', [\App\Http\Controllers\OwnerController::class, 'index'])->name('owner.index');
+
+
+// --- ROUTE KHUSUS PELANGGAN (Bawaan Laravel Auth) ---
 Route::middleware(['auth'])->group(function () {
     
     Route::get('/pelanggan/dashboard', function () {
-    return view('pelanggan.dashboard');
-})->name('pelanggan.dashboard'); // Pastikan namanya 'pelanggan.dashboard'
+        return view('pelanggan.dashboard');
+    })->name('pelanggan.dashboard');
 
-    // Tambahkan route khusus pelanggan jika ada
     Route::get('/katalog', function () {
         return view('pelanggan.katalog');
     })->name('pelanggan.katalog');
