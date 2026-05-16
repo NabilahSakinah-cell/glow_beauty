@@ -30,7 +30,7 @@
         <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-rose-600 transition">Masuk</a>
         <a href="/login-owner" class="text-sm font-medium text-rose-600 border border-rose-600 hover:bg-rose-50 px-4 py-1.5 rounded-full transition">Owner Area</a>
     @if (Route::has('register'))
-    <a href="{{ route('register') }}" class="text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-full transition shadow-md shadow-rose-200">Daftar Admin</a>
+    <a href="/login-admin" class="text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-full transition shadow-md shadow-rose-200">Masuk Admin</a>
 @endif
 @endauth
     @endif

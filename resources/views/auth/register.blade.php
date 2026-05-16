@@ -1,59 +1,68 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar - Glow Beauty</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daftar Akun - Glow Beauty</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
-        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-rose-50 antialiased min-h-screen flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden">
-    
-    <div class="absolute top-0 right-0 w-64 h-64 bg-rose-200 rounded-full filter blur-3xl opacity-30 translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 left-0 w-64 h-64 bg-amber-200 rounded-full filter blur-3xl opacity-30 -translate-x-1/2 translate-y-1/2"></div>
+<body class="bg-rose-50/50 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-[2.5rem] border border-rose-100 p-10 fade-in z-10">
-        <div class="text-center mb-8">
-            <h2 class="text-4xl font-serif font-bold text-rose-600">Glow Beauty</h2>
-            <p class="text-sm text-gray-400 mt-2 italic">Mulai perjalanan cantikmu di sini</p>
+    <div class="bg-white p-8 rounded-3xl border border-rose-100 w-full max-w-md shadow-xl shadow-rose-100/50 animate-fade-in">
+        
+        <div class="text-center mb-6">
+            <h1 class="text-4xl font-serif font-bold text-rose-600 mb-2">Glow Beauty 💄</h1>
+            <p class="text-slate-400 text-sm">Mulai perjalanan cantikmu di sini</p>
         </div>
 
-        <form method="POST" action="{{ route('register') }}">
-            @csrf <input type="hidden" name="role" value="pelanggan">
+        <form action="/register" method="POST" class="space-y-4">
+            @csrf
+            
+            @if($errors->any())
+                <div class="text-red-600 text-xs font-semibold text-center bg-red-50 p-3 rounded-xl border border-red-100">
+                    {{ $errors->first() }}
+                </div>
+            @endif
 
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-rose-800 uppercase tracking-widest mb-1 ml-1">Nama Lengkap</label>
-                    <input type="text" name="name" required class="w-full px-5 py-3 bg-rose-50/50 border border-rose-100 rounded-2xl focus:ring-2 focus:ring-rose-400 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-rose-800 uppercase tracking-widest mb-1 ml-1">Email</label>
-                    <input type="email" name="email" required class="w-full px-5 py-3 bg-rose-50/50 border border-rose-100 rounded-2xl focus:ring-2 focus:ring-rose-400 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-rose-800 uppercase tracking-widest mb-1 ml-1">Password</label>
-                    <input type="password" name="password" required class="w-full px-5 py-3 bg-rose-50/50 border border-rose-100 rounded-2xl focus:ring-2 focus:ring-rose-400 outline-none transition-all">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-rose-800 uppercase tracking-widest mb-1 ml-1">Konfirmasi Password</label>
-                    <input type="password" name="password_confirmation" required class="w-full px-5 py-3 bg-rose-50/50 border border-rose-100 rounded-2xl focus:ring-2 focus:ring-rose-400 outline-none transition-all">
-                </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">Nama Lengkap</label>
+                <input type="text" name="name" value="{{ old('name') }}" class="w-full px-4 py-2.5 border border-rose-100 bg-rose-50/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm" placeholder="Nama lengkap kamu" required>
             </div>
 
-            <button type="submit" class="w-full mt-8 bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-rose-200 transition-all active:scale-95">
-                Daftar Sekarang
-            </button>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">Email</label>
+                <input type="email" name="email" value="{{ old('email') }}" class="w-full px-4 py-2.5 border border-rose-100 bg-rose-50/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm" placeholder="nama@email.com" required>
+            </div>
             
-            <p class="mt-6 text-center text-sm text-gray-500">
-                Sudah punya akun? <a href="{{ route('login') }}" class="text-rose-600 font-bold hover:underline">Login</a>
-            </p>
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">Password</label>
+                <input type="password" name="password" class="w-full px-4 py-2.5 border border-rose-100 bg-rose-50/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm" placeholder="Minimal 6 karakter" required>
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">Konfirmasi Password</label>
+                <input type="password" name="password_confirmation" class="w-full px-4 py-2.5 border border-rose-100 bg-rose-50/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm" placeholder="Ulangi password" required>
+            </div>
+
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-xl transition duration-300 transform active:scale-95 shadow-md shadow-rose-200 text-sm">
+                Daftar Akun Baru ✨
+            </button>
         </form>
+
+        <div class="mt-6 text-center border-t border-rose-50 pt-4 text-xs text-slate-400">
+            Sudah punya akun? <a href="/login" class="text-rose-600 font-semibold hover:underline">Masuk di sini</a>
+        </div>
     </div>
+
 </body>
 </html>

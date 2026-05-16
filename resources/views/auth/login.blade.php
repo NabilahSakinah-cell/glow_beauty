@@ -1,61 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Glow Beauty</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Masuk Akun - Glow Beauty</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Poppins', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
-        .fade-in { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
-<body class="bg-rose-50 antialiased min-h-screen flex flex-col justify-center items-center py-12 px-4 relative overflow-hidden">
-    
-    <div class="absolute top-1/2 left-0 w-96 h-96 bg-rose-200 rounded-full filter blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
+<body class="bg-rose-50/50 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-[2.5rem] border border-rose-100 p-10 fade-in z-10">
-        <div class="text-center mb-10">
-            <h2 class="text-4xl font-serif font-bold text-rose-600">Glow Beauty</h2>
-            <p class="text-sm text-gray-400 mt-2 italic">Selamat datang kembali, Cantik!</p>
+    <div class="bg-white p-8 rounded-3xl border border-rose-100 w-full max-w-md shadow-xl shadow-rose-100/50 animate-fade-in">
+        
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-serif font-bold text-rose-600 mb-2">Glow Beauty 💄</h1>
+            <p class="text-slate-400 text-sm">Selamat datang kembali, silakan masuk</p>
         </div>
 
-        @if(session('error'))
-        <div class="mb-6 p-4 bg-red-50 text-red-600 text-xs rounded-2xl border border-red-100 font-medium">
-            ⚠️ {{ session('error') }}
-        </div>
-        @endif
+        <form action="/login" method="POST" class="space-y-5">
+            @csrf
+            
+            @if(session('success'))
+                <div class="text-emerald-600 text-xs font-semibold text-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-        <form method="POST" action="{{ route('login') }}">
-            @csrf <div class="space-y-6">
-                <div>
-                    <label class="block text-xs font-bold text-rose-800 uppercase tracking-widest mb-1 ml-1">Email</label>
-                    <input type="email" name="email" value="{{ old('email') }}" required class="w-full px-5 py-4 bg-rose-50/30 border border-rose-100 rounded-2xl focus:ring-2 focus:ring-rose-400 outline-none transition-all placeholder:text-gray-300" placeholder="nama@email.com">
+            @if($errors->any())
+                <div class="text-red-600 text-xs font-semibold text-center bg-red-50 p-3 rounded-xl border border-red-100">
+                    {{ $errors->first() }}
                 </div>
-                <div>
-                    <div class="flex justify-between items-center mb-1 ml-1">
-                        <label class="text-xs font-bold text-rose-800 uppercase tracking-widest">Password</label>
-                        <a href="#" class="text-[10px] text-rose-400 font-bold hover:text-rose-600 uppercase">Lupa?</a>
-                    </div>
-                    <input type="password" name="password" required class="w-full px-5 py-4 bg-rose-50/30 border border-rose-100 rounded-2xl focus:ring-2 focus:ring-rose-400 outline-none transition-all placeholder:text-gray-300" placeholder="••••••••">
-                </div>
+            @endif
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Email Anda</label>
+                <input type="email" name="email" value="{{ old('email') }}" class="w-full px-4 py-3 border border-rose-100 bg-rose-50/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm" placeholder="nama@email.com" required>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-2 uppercase tracking-wider">Password</label>
+                <input type="password" name="password" class="w-full px-4 py-3 border border-rose-100 bg-rose-50/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all text-sm" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="w-full mt-10 bg-rose-600 hover:bg-rose-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-rose-200 transition-all active:scale-95">
-                Masuk ke Dashboard
+            <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 rounded-xl transition duration-300 transform active:scale-95 shadow-md shadow-rose-200 text-sm">
+                Masuk Akun 🛍️
             </button>
-            
-            <p class="mt-8 text-center text-sm text-gray-500">
-                Belum punya akun? <a href="{{ route('register') }}" class="text-rose-600 font-bold hover:underline">Daftar Akun</a>
-            </p>
         </form>
+
+        <div class="mt-8 text-center border-t border-rose-50 pt-4 text-xs text-slate-400">
+            Belum punya akun? <a href="/register" class="text-rose-600 font-semibold hover:underline">Daftar sekarang</a>
+        </div>
     </div>
 
-    <footer class="mt-8 text-[10px] text-rose-300 uppercase tracking-[0.2em] font-bold z-10">
-        &copy; 2026 ITH - Glow Beauty Project
-    </footer>
 </body>
 </html>
