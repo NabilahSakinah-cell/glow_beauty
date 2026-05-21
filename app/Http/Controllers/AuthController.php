@@ -50,8 +50,9 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // Jika berhasil login, lempar ke katalog produk utama
-            return redirect('/')->with('success', 'Selamat datang di Glow Beauty! ✨');
+            
+            // HANYA BAGIAN INI YANG DIGANTI ALAMAT TUJUANNYA KE DASHBOARD KATALOG
+            return redirect('/pelanggan/dashboard')->with('success', 'Selamat datang di Glow Beauty! ✨');
         }
 
         // Kirim Notifikasi Gagal (Poin L)
