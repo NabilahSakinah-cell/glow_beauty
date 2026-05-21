@@ -15,6 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// ------------------------------------------------------------------
+// TAMBAHAN: Jembatan Pengalihan Otomatis
+// ------------------------------------------------------------------
+// Jika Laravel Breeze/sistem mencari rute '/dashboard' bawaan,
+// langsung kita lempar paksa ke halaman katalog pelanggan milikmu.
+Route::redirect('/dashboard', '/pelanggan/dashboard');
+// ------------------------------------------------------------------
+
 
 // ==========================================
 // JALUR PELANGGAN (Form Login & Register Bawaan)

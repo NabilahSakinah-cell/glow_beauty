@@ -23,18 +23,10 @@
                     </div>
                     
                     <div class="flex items-center space-x-4">
-                        @if (Route::has('login'))
-                    @auth
-                <a href="{{ url('/pelanggan/dashboard') }}" class="text-sm font-medium text-rose-700 hover:text-rose-900 bg-rose-100 px-4 py-2 rounded-full transition">Dashboard</a>
-            @else
-        <a href="{{ route('login') }}" class="text-sm font-medium text-gray-600 hover:text-rose-600 transition">Masuk</a>
-        <a href="/login-owner" class="text-sm font-medium text-rose-600 border border-rose-600 hover:bg-rose-50 px-4 py-1.5 rounded-full transition">Owner Area</a>
-    @if (Route::has('register'))
-    <a href="/login-admin" class="text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-full transition shadow-md shadow-rose-200">Masuk Admin</a>
-@endif
-@endauth
-    @endif
-</div>
+                        <a href="/login" class="text-sm font-medium text-gray-600 hover:text-rose-600 transition">Masuk</a>
+                        <a href="/login-owner" class="text-sm font-medium text-rose-600 border border-rose-600 hover:bg-rose-50 px-4 py-1.5 rounded-full transition">Owner</a>
+                        <a href="/login-admin" class="text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 px-5 py-2 rounded-full transition shadow-md shadow-rose-200">Admin</a>
+                    </div>
                 </div>
             </div>
         </nav>
@@ -48,9 +40,6 @@
                     <p class="text-lg text-gray-600 mb-8 leading-relaxed">
                         Solusi manajemen stok dan pesanan skincare terbaik. Kelola produk makeup dengan sistem yang terstruktur, efisien, dan modern.
                     </p>
-                    <div class="flex space-x-4">
-                        <a href="{{ route('register') }}" class="bg-rose-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-rose-700 transition shadow-lg">Mulai Sekarang</a>
-                    </div>
                 </div>
                 <div class="md:w-1/2 flex justify-center relative">
                     <div class="w-80 h-80 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 absolute animate-pulse"></div>

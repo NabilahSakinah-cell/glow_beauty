@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+// TAMBAHAN: Import class rute bawaan Laravel
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // ------------------------------------------------------------------
+        // TAMBAHAN: Memaksa rute bawaan Laravel 11 dialihkan ke katalog kamu
+        // ------------------------------------------------------------------
+        RedirectIfAuthenticated::redirectUsing(fn () => route('pelanggan.dashboard', absolute: false));
+        // ------------------------------------------------------------------
     }
 }

@@ -28,6 +28,17 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // ------------------------------------------------------------------
+        // TAMBAHAN: Jika rute 'pelanggan.dashboard' ada, langsung alihkan ke sana
+        // ------------------------------------------------------------------
+        if (\Illuminate\Support\Facades\Route::has('pelanggan.dashboard')) {
+            return redirect()->intended(route('pelanggan.dashboard'));
+        }
+        
+        // Alternatif tambahan jika kamu menggunakan URL manual tanpa nama rute
+        return redirect()->intended('/pelanggan/dashboard');
+        // ------------------------------------------------------------------
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
