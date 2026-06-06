@@ -110,7 +110,7 @@
         <p class="text-rose-600 font-bold mt-2 italic">Rp 30.000</p>
     </div>
 
-    <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 group transition hover:scale-105 hover:shadow-md cursor-pointer">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 group transition hover:scale-105 hover:shadow-md cursor-pointer">
         <div class="aspect-square bg-rose-50 rounded-xl mb-4 overflow-hidden relative">
             <span class="absolute top-2 left-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg z-10">-20%</span>
             <img src="https://dimg.dillards.com/is/image/DillardsZoom/zoom/dior-dior-addict-lip-maximizer-plumping-gloss/00000000_zi_b7e5b609-f91f-44dd-a7f8-a48792ddf681.jpg" alt="Dior" class="w-full h-full object-cover">
@@ -122,6 +122,21 @@
         <div class="flex items-center gap-2 mt-2">
             <p class="text-rose-600 font-bold italic">Rp 520.000</p>
             <p class="text-gray-400 line-through text-xs italic">Rp 650.000</p>
+        </div>
+    </div>
+     
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 group transition hover:scale-105 hover:shadow-md cursor-pointer">
+        <div class="aspect-square bg-rose-50 rounded-xl mb-4 overflow-hidden relative">
+            <span class="absolute top-2 left-2 bg-rose-600 text-white text-[10px] font-bold px-2 py-1 rounded-lg z-10">-35%</span>
+            <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full/catalog-image/93/MTA-182196000/brd-44261_pinkflash-conceal-pores-primer-pr01-primer-base-make-up-25g_full01-909f73b3.jpg" alt="Pinkflash" class="w-full h-full object-cover">
+            <button class="absolute top-2 right-2 text-rose-300 hover:text-rose-500 transition btn-wish"><i class="fa-solid fa-heart"></i></button>
+            <button class="absolute bottom-2 right-2 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition text-rose-600 btn-add-cart"><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <p class="text-xs text-rose-400 font-bold uppercase tracking-widest">Makeup</p>
+        <h4 class="font-bold text-gray-800">Pinkflash Conceal Pores Primer</h4>
+        <div class="flex items-center gap-2 mt-2">
+            <p class="text-rose-600 font-bold italic">Rp 29.900</p>
+            <p class="text-gray-400 line-through text-xs italic">Rp 46.000</p>
         </div>
     </div>
 
@@ -145,6 +160,28 @@
         <p class="text-xs text-rose-400 font-bold uppercase tracking-widest">Makeup</p>
         <h4 class="font-bold text-gray-800">Sea Makeup Blendable Blush</h4>
         <p class="text-rose-600 font-bold mt-2 italic">Rp 60.000</p>
+    </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 group transition hover:scale-105 hover:shadow-md cursor-pointer">
+        <div class="aspect-square bg-rose-50 rounded-xl mb-4 overflow-hidden relative">
+            <img src="https://images.soco.id/85701682404-1598580117511.png" alt="Wardah Hydra Rose Night Gel" class="w-full h-full object-cover">
+            <button class="absolute top-2 right-2 text-rose-300 hover:text-rose-500 transition btn-wish"><i class="fa-solid fa-heart"></i></button>
+            <button class="absolute bottom-2 right-2 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition text-rose-600 btn-add-cart"><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <p class="text-xs text-rose-400 font-bold uppercase tracking-widest">Skincare</p>
+        <h4 class="font-bold text-gray-800">Wardah Hydra Rose Moisture Rich Night Gel</h4>
+        <p class="text-rose-600 font-bold mt-2 italic">Rp 115.000</p>
+    </div>
+
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 group transition hover:scale-105 hover:shadow-md cursor-pointer">
+        <div class="aspect-square bg-rose-50 rounded-xl mb-4 overflow-hidden relative">
+            <img src="https://d2jlkn4m127vak.cloudfront.net/medias/products/variant-1710312736.png" alt="Wardah Glasting Liquid Lip" class="w-full h-full object-cover">
+            <button class="absolute top-2 right-2 text-rose-300 hover:text-rose-500 transition btn-wish"><i class="fa-solid fa-heart"></i></button>
+            <button class="absolute bottom-2 right-2 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition text-rose-600 btn-add-cart"><i class="fa-solid fa-plus"></i></button>
+        </div>
+        <p class="text-xs text-rose-400 font-bold uppercase tracking-widest">Makeup</p>
+        <h4 class="font-bold text-gray-800">Wardah Glasting Liquid Lip</h4>
+        <p class="text-rose-600 font-bold mt-2 italic">Rp 93.000</p>
     </div>
 
 </div>
