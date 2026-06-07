@@ -7,7 +7,6 @@ use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdukController; 
 
-
 // ==========================================
 // Halaman Utama / Landing Page
 // ==========================================
@@ -15,17 +14,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// ------------------------------------------------------------------
-// TAMBAHAN: Jembatan Pengalihan Otomatis
-// ------------------------------------------------------------------
-// Jika Laravel Breeze/sistem mencari rute '/dashboard' bawaan,
-// langsung kita lempar paksa ke halaman katalog pelanggan milikmu.
-Route::redirect('/dashboard', '/pelanggan/dashboard');
-// ------------------------------------------------------------------
-
-
 // ==========================================
-// JALUR PELANGGAN (Form Login & Register Bawaan)
+// JALUR PELANGGAN (Form Login & Register)
 // ==========================================
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -42,9 +32,8 @@ Route::get('/login-owner', function () {
 Route::post('/login-owner', [OwnerController::class, 'login']);
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner.index');
 
-
 // ==========================================
-// JALUR ADMIN (Sistem Baru - Hak Akses Admin)
+// JALUR ADMIN (Manajemen Produk & Katalog)
 // ==========================================
 // 1. Halaman Form Login Admin
 Route::get('/login-admin', function () {
@@ -55,27 +44,30 @@ Route::post('/login-admin', [AdminController::class, 'login']);
 // 2. Dashboard Utama Admin
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-// 3. Rute Fitur Kerja Admin (DIARAHKAN KE PRODUK CONTROLLER AGAR VARIABELNYA TERDEFINISI)
+// 3. Rute Fitur Kerja Admin
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
 Route::get('/admin/stok', [ProdukController::class, 'stok'])->name('admin.stok'); 
-Route::get('/admin/produk', [ProdukController::class, 'create']); 
+Route::get('/admin/produk', [ProdukController::class, 'create'])->name('admin.produk.create'); 
 
+// Jalur Penyimpanan Produk (Kunci Utama Masuk Database)
+Route::post('/admin/produk/simpan', [ProdukController::class, 'store'])->name('admin.produk.store');
 
-// Untuk fungsi simpan, edit, update, dan hapus (Sesuaikan dengan nama fungsi yang ada di ProdukController Anda)
-Route::post('/admin/produk/simpan', [ProdukController::class, 'simpan_produk']);
 Route::get('/admin/produk/edit/{id}', [ProdukController::class, 'edit']); 
 Route::post('/admin/produk/update/{id}', [ProdukController::class, 'update_produk']);
 Route::get('/admin/produk/hapus/{id}', [ProdukController::class, 'hapus_produk']);
-
 
 // ==========================================
 // JALUR PROTEKSI PELANGGAN (Middleware Auth)
 // ==========================================
 Route::middleware(['auth'])->group(function () {
     
-    Route::get('/pelanggan/dashboard', function () {
-        return view('pelanggan.dashboard');
-    })->name('pelanggan.dashboard');
+    // PERBAIKAN 1: Pengalihan bawaan dipindahkan ke DALAM proteksi auth agar aman
+    Route::get('/dashboard', function() {
+        return redirect()->route('pelanggan.dashboard');
+    });
+
+    // PERBAIKAN 2: Rute resmi katalog pelanggan yang terhubung ke database via Controller
+    Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexPelanggan'])->name('pelanggan.dashboard');
 
     Route::get('/katalog', function () {
         return view('pelanggan.katalog');

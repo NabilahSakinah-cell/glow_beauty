@@ -14,4 +14,12 @@ class Produk extends Model
 
     // Matikan timestamps jika tabelmu tidak punya kolom created_at & updated_at
     public $timestamps = false;
+
+    // TAMBAHKAN INI: Mengizinkan kolom-kolom berikut untuk diisi data baru
+    protected $fillable = [
+        'nama', 
+        'kategori', 
+        'harga', 
+        'foto'
+    ];
 }
