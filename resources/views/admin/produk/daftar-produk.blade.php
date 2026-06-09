@@ -38,47 +38,44 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <thead>
-    <tr class="bg-rose-50 text-rose-900 font-semibold text-sm">
-        <th class="p-4 border-b border-rose-100 text-center w-16">No</th>
-        <th class="p-4 border-b border-rose-100">Gambar</th>
-        <th class="p-4 border-b border-rose-100">Nama Produk</th>
-        <th class="p-4 border-b border-rose-100">Deskripsi</th> <th class="p-4 border-b border-rose-100">Kategori</th>
-        <th class="p-4 border-b border-rose-100">Harga</th>
-        <th class="p-4 border-b border-rose-100 text-center w-24">Stok</th>
-        <th class="p-4 border-b border-rose-100 text-center w-32">Aksi</th>
-    </tr>
-</thead>
-
-<tbody class="divide-y divide-rose-50 text-sm">
-    @foreach($produk as $index => $item)
-    <tr class="hover:bg-rose-50/30 transition-colors duration-200">
-        <td class="p-4 text-center font-medium text-slate-400">{{ $index + 1 }}</td>
-        <td class="p-4">
-            <img src="{{ asset('uploads/produk/' . ($item->gambar ?? 'default.png')) }}" alt="Gambar Produk" class="w-14 h-14 object-cover rounded-2xl border border-rose-100 shadow-sm">
-        </td>
-        <td class="p-4 font-semibold text-slate-800">{{ $item->nama_produk ?? $item->nama }}</td>
-        
-        <td class="p-4 text-slate-600 text-xs max-w-[150px] truncate">
-            {{ $item->deskripsi ?? $item->deskripsi_produk ?? '-' }}
-        </td>
-
-        <td class="p-4">
-            <span class="bg-rose-50 text-rose-700 text-xs px-3 py-1 rounded-full font-medium border border-rose-100">
-                {{ $item->kategori ?? 'Umum' }}
-            </span>
-        </td>
-        <td class="p-4 font-bold text-rose-600">Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}</td>
-        <td class="p-4 text-center font-semibold {{ ($item->stok ?? 0) < 10 ? 'text-red-500 bg-red-50/50 rounded-lg' : 'text-slate-700' }}">{{ $item->stok ?? 0 }}</td>
-        <td class="p-4 text-center">
-            <div class="flex justify-center items-center gap-3">
-                <a href="/admin/produk/edit/{{ $item->id_produk ?? $item->id }}" class="bg-amber-50 hover:bg-amber-500 text-amber-600 hover:text-white px-3 py-1.5 rounded-lg border border-amber-200 transition-all duration-200 font-medium text-xs shadow-sm">Edit</a>
-                <a href="/admin/produk/hapus/{{ $item->id_produk ?? $item->id }}" onclick="return confirm('Yakin hapus?')" class="bg-red-50 hover:bg-red-500 text-red-600 hover:text-white px-3 py-1.5 rounded-lg border border-red-200 transition-all duration-200 font-medium text-xs shadow-sm">Hapus</a>
-            </div>
-        </td>
-    </tr>
-    @endforeach
-</tbody>
+                        <tr class="bg-rose-50 text-rose-900 font-semibold text-sm">
+                            <th class="p-4 border-b border-rose-100 text-center w-16">No</th>
+                            <th class="p-4 border-b border-rose-100">Gambar</th>
+                            <th class="p-4 border-b border-rose-100">Nama Produk</th>
+                            <th class="p-4 border-b border-rose-100">Kategori</th>
+                            <th class="p-4 border-b border-rose-100">Harga</th>
+                            <th class="p-4 border-b border-rose-100 text-center w-24">Stok</th>
+                            <th class="p-4 border-b border-rose-100 text-center w-32">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-rose-50 text-sm">
+                        @foreach($produk as $index => $item)
+                        <tr class="hover:bg-rose-50/30 transition-colors duration-200">
+                            <td class="p-4 text-center font-medium text-slate-400">{{ $index + 1 }}</td>
+                            <td class="p-4">
+                                <img src="{{ asset('uploads/produk/' . $item->gambar) }}" alt="Gambar Produk" class="w-14 h-14 object-cover rounded-2xl border border-rose-100 shadow-sm transition-transform duration-300 hover:scale-110">
+                            </td>
+                            <td class="p-4 font-semibold text-slate-800">{{ $item->nama_produk }}</td>
+                            <td class="p-4">
+                                <span class="bg-rose-50 text-rose-700 text-xs px-3 py-1 rounded-full font-medium border border-rose-100">
+                                    {{ $item->kategori }}
+                                </span>
+                            </td>
+                            <td class="p-4 font-bold text-rose-600">Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}</td>
+                            <td class="p-4 text-center font-semibold {{ $item->stok < 10 ? 'text-red-500 bg-red-50/50 rounded-lg' : 'text-slate-700' }}">{{ $item->stok }}</td>
+                            <td class="p-4 text-center">
+                                <div class="flex justify-center items-center gap-3">
+                                    <a href="/admin/produk/edit/{{ $item->id_produk }}" class="bg-amber-50 hover:bg-amber-500 text-amber-600 hover:text-white px-3 py-1.5 rounded-lg border border-amber-200 transition-all duration-200 font-medium text-xs shadow-sm">
+                                        Edit
+                                    </a>
+                                    <a href="/admin/produk/hapus/{{ $item->id_produk }}" onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')" class="bg-red-50 hover:bg-red-500 text-red-600 hover:text-white px-3 py-1.5 rounded-lg border border-red-200 transition-all duration-200 font-medium text-xs shadow-sm">
+                                        Hapus
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
         </div>

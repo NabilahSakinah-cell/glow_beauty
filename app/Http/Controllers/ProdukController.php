@@ -64,15 +64,9 @@ class ProdukController extends Controller
 
         // 4. Tangkap seluruh data dari Form HTML
         $nama_final      = $request->nama ?? $request->nama_produk ?? 'Produk Kosmetik';
-        
-        // Membersihkan harga dari titik/koma
-        $harga_input     = $request->harga ?? 0;
-        $harga_final     = (int) preg_replace('/[^0-9]/', '', $harga_input);
-        
+        $harga_final     = $request->harga ?? 0;
         $kategori_final  = $request->kategori ?? 'Umum';
-        $stok_final      = (int) ($request->stok ?? 10);
-        
-        // Memperbaiki deskripsi agar terdefinisi dengan benar
+        $stok_final      = $request->stok ?? 10;
         $deskripsi_final = $request->deskripsi ?? $request->deskripsi_produk ?? 'Produk kecantikan Glow Beauty';
 
         // 5. Filter data: Hanya masukkan data jika nama kolomnya ada di database kamu!
@@ -112,30 +106,16 @@ class ProdukController extends Controller
         return redirect()->back()->with('success', 'Produk kosmetik baru berhasil di-upload! ✨');
     }
 
-    public function indexPelanggan(Request $request)
-{
-    // 1. Deteksi tabel yang digunakan
-    $namaTabel = Schema::hasTable('produk') ? 'produk' : 'products';
-    $query = DB::table($namaTabel);
+    public function indexPelanggan()
+    {
+        try {
+            $produk = DB::table('produk')->get();
+        } catch (\Throwable $e) {
+            $produk = DB::table('products')->get();
+        }
 
-    // 2. Logika Pencarian
-    if ($request->filled('search')) {
-        $search = $request->search;
-        $query->where(function($q) use ($search) {
-            $q->where('nama_produk', 'like', '%' . $search . '%');
-        });
+        return view('pelanggan.dashboard', compact('produk'));
     }
-
-    // 3. Eksekusi query produk
-    $produk = $query->get();
-
-    // --- TAMBAHKAN BARIS INI (Baris baru) ---
-    // Mengambil data keranjang untuk ditampilkan di dashboard
-    $keranjang = DB::table('detail_keranjang')->get();
-
-    // 4. Kirim keduanya ke view 'pelanggan.dashboard'
-    return view('pelanggan.dashboard', compact('produk', 'keranjang'));
-}
 
     public function stok()
     {
@@ -176,57 +156,4 @@ class ProdukController extends Controller
         }
         return view('admin.pesanan', compact('pesanan'));
     }
-
-
-public function tambahKeKeranjang(Request $request)
-{
-    $tabel = Schema::hasTable('produk') ? 'produk' : 'products';
-    $produk = DB::table($tabel)->where('id_produk', $request->id_produk)->first();
-
-    // BAGIAN UBAH 1: Jika produk tidak ditemukan, kembali ke halaman sebelumnya dengan error
-    if (!$produk) {
-        return redirect()->back()->with('error', 'Produk tidak ditemukan!'); 
-    }
-
-    // Gunakan updateOrInsert
-    DB::table('detail_keranjang')->updateOrInsert(
-        [
-            'id_keranjang' => 1,
-            'id_produk'    => $produk->id_produk
-        ],
-        [
-            'nama_produk'  => $produk->nama_produk,
-            'harga'        => $produk->harga,
-            'jumlah'       => DB::raw('jumlah + 1')
-        ]
-    );
-
-    // BAGIAN UBAH 2: Arahkan langsung ke halaman keranjang setelah berhasil
-    return redirect()->route('keranjang.tampil')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
-}
-
-public function tampilKeranjang()
-{
-    // Mengambil semua data dari detail_keranjang untuk keranjang utama (ID 1)
-    $keranjang = DB::table('detail_keranjang')
-    ->join('produk', 'detail_keranjang.id_produk', '=', 'produk.id_produk')
-    ->select('detail_keranjang.*', 'produk.gambar')
-    ->where('id_keranjang', 1)
-    ->get();
-    
-    return view('pelanggan.keranjang', compact('keranjang'));
-}
-
-public function prosesCheckout(Request $request)
-{
-    // Logika untuk menyimpan pesanan Anda
-    $keranjang = DB::table('detail_keranjang')->where('id_keranjang', 1)->get();
-    
-    // Pastikan sudah ada proses simpan ke database di sini
-    
-    // Hapus keranjang setelah checkout
-    DB::table('detail_keranjang')->where('id_keranjang', 1)->delete();
-
-    return redirect()->route('pelanggan.dashboard')->with('success', 'Pesanan berhasil dibuat!');
-}
 }
