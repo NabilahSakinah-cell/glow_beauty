@@ -7,7 +7,9 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     public function up(): void
-    {
+{
+    // Tambahkan !Schema::hasTable agar Laravel hanya membuat tabel jika belum ada
+    if (!Schema::hasTable('owner')) {
         Schema::create('owner', function (Blueprint $table) {
             $table->id('id_owner');
             $table->string('nama');
@@ -16,9 +18,10 @@ return new class extends Migration
             $table->timestamps();
         });
     }
+}
 
-    public function down(): void
-    {
-        Schema::dropIfExists('owner');
-    }
+public function down(): void
+{
+    Schema::dropIfExists('owner');
+}
 };

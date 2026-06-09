@@ -49,7 +49,7 @@
                             <td class="p-4 font-bold text-rose-600">Rp {{ number_format($item->total_harga ?? 0, 0, ',', '.') }}</td>
                             <td class="p-4 text-center">
                                 <span class="bg-amber-50 text-amber-700 text-xs px-3 py-1 rounded-full font-medium border border-amber-100">
-                                    Pending
+                                    {{ $item->status ?? 'Pending' }}
                                 </span>
                             </td>
                             <td class="p-4 text-center">
@@ -60,8 +60,8 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="p-8 text-center text-slate-400 italic bg-rose-50/10">
-                                Belum ada pesanan masuk saat ini. Belanjaan pelanggan akan muncul di sini! ✨
+                            <td colspan="6" class="p-12 text-center text-slate-400 italic">
+                                Belum ada pesanan masuk saat ini. ✨
                             </td>
                         </tr>
                         @endforelse
