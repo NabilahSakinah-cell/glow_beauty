@@ -44,6 +44,15 @@ Route::post('/login-admin', [AdminController::class, 'login']);
 // 2. Dashboard Utama Admin
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
+// Data Pesanan
+Route::get('/admin/pesanan', function () {
+
+    $pesanan = [];
+
+    return view('admin.pesanan', compact('pesanan'));
+
+})->name('admin.pesanan');
+
 // 3. Rute Fitur Kerja Admin
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
 Route::get('/admin/stok', [ProdukController::class, 'stok'])->name('admin.stok'); 

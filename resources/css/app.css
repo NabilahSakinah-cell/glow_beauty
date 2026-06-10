@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body{
+    background:#fff8f8;
+    font-family:'Poppins',sans-serif;
+}
+
+.stat-card{
+    border:none;
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.05);
+}
+
+.icon{
+    width:60px;
+    height:60px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:15px;
+    font-size:25px;
+}
+
+.yellow{
+    background:#fff0c2;
+}
+
+.blue{
+    background:#dcecff;
+}
+
+.pink{
+    background:#ffd8e7;
+}
+
+.green{
+    background:#daf7df;
+}
+
+.btn-export{
+    background:#f24d7c;
+    color:white;
+    border:none;
+}
+
+.btn-detail{
+    background:#ff4d88;
+    color:white;
+}
+
+.btn-status{
+    background:#d61c59;
+    color:white;
+}
