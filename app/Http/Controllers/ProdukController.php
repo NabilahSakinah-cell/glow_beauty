@@ -41,18 +41,11 @@ class ProdukController extends Controller
         }
     }
 
-    /**
-     * PROSES SIMPAN PRODUK - MODE ULTRA AMAN (AUTO-DETECT KOLOM)
-     */
     public function store(Request $request)
     {
-        // 1. Deteksi nama tabel yang aktif di database kamu
         $namaTabel = Schema::hasTable('produk') ? 'produk' : 'products';
-
-        // 2. Ambil daftar kolom asli dari tabel database kamu secara live
         $kolomTersedia = Schema::getColumnListing($namaTabel);
 
-        // 3. Proses upload file gambar/foto secara fleksibel
         $namaFoto = 'default.png';
         if ($request->hasFile('foto')) {
             $namaFoto = time() . '_' . $request->file('foto')->getClientOriginalName();
@@ -62,59 +55,36 @@ class ProdukController extends Controller
             $request->file('gambar')->move(public_path('uploads/produk'), $namaFoto);
         }
 
-        // 4. Tangkap seluruh data dari Form HTML
         $nama_final      = $request->nama ?? $request->nama_produk ?? 'Produk Kosmetik';
         $harga_final     = $request->harga ?? 0;
         $kategori_final  = $request->kategori ?? 'Umum';
         $stok_final      = $request->stok ?? 10;
         $deskripsi_final = $request->deskripsi ?? $request->deskripsi_produk ?? 'Produk kecantikan Glow Beauty';
 
-        // 5. Filter data: Hanya masukkan data jika nama kolomnya ada di database kamu!
         $dataSimpan = [];
 
         if (in_array('nama', $kolomTersedia)) $dataSimpan['nama'] = $nama_final;
         if (in_array('nama_produk', $kolomTersedia)) $dataSimpan['nama_produk'] = $nama_final;
-        
         if (in_array('kategori', $kolomTersedia)) $dataSimpan['kategori'] = $kategori_final;
         if (in_array('harga', $kolomTersedia)) $dataSimpan['harga'] = $harga_final;
         if (in_array('stok', $kolomTersedia)) $dataSimpan['stok'] = $stok_final;
-        
         if (in_array('deskripsi', $kolomTersedia)) $dataSimpan['deskripsi'] = $deskripsi_final;
         if (in_array('deskripsi_produk', $kolomTersedia)) $dataSimpan['deskripsi_produk'] = $deskripsi_final;
-        
         if (in_array('foto', $kolomTersedia)) $dataSimpan['foto'] = $namaFoto;
         if (in_array('gambar', $kolomTersedia)) $dataSimpan['gambar'] = $namaFoto;
-        
         if (in_array('created_at', $kolomTersedia)) $dataSimpan['created_at'] = now();
         if (in_array('updated_at', $kolomTersedia)) $dataSimpan['updated_at'] = now();
 
-        // 6. Eksekusi penyimpanan ke tabel database
         try {
             DB::table($namaTabel)->insert($dataSimpan);
         } catch (\Throwable $errFinal) {
-            // Jika skenario terburuk masih gagal, bongkar struktur lengkapnya ke layar untuk dibaca
             dd([
                 'STATUS' => 'Gagal total saat melakukan insert!',
-                'NAMA_TABEL' => $namaTabel,
-                'KOLOM_YANG_ADA_DI_DATABASE_KAMU' => $kolomTersedia,
-                'DATA_YANG_DIKIRIM_LARAVEL' => $dataSimpan,
                 'PESAN_ERROR_MYSQL' => $errFinal->getMessage()
             ]);
         }
 
-        // 7. Kembali ke halaman form dengan status sukses
         return redirect()->back()->with('success', 'Produk kosmetik baru berhasil di-upload! ✨');
-    }
-
-    public function indexPelanggan()
-    {
-        try {
-            $produk = DB::table('produk')->get();
-        } catch (\Throwable $e) {
-            $produk = DB::table('products')->get();
-        }
-
-        return view('pelanggan.dashboard', compact('produk'));
     }
 
     public function stok()
@@ -130,17 +100,36 @@ class ProdukController extends Controller
 
     public function edit($id)
     {
-        try {
-            $produk = DB::table('produk')->where('id_produk', $id)->orWhere('id', $id)->first();
-        } catch (\Throwable $e) {
+        $produk = DB::table('produk')->where('id_produk', $id)->first();
+
+        if (!$produk) {
             $produk = DB::table('products')->where('id', $id)->first();
         }
 
-        try {
-            return view('admin.produk.edit-produk', compact('produk'));
-        } catch (\Throwable $e) {
-            return view('admin.products.edit-produk', compact('produk'));
+        if (!$produk) {
+            return redirect()->back()->with('error', 'Data produk tidak ditemukan di database!');
         }
+
+        return view('admin.produk.edit-produk', compact('produk'));
+    }
+
+    public function update_produk(Request $request, $id)
+    {
+        $data = [
+            'nama_produk'      => $request->nama_produk,
+            'kategori'         => $request->kategori,
+            'harga'            => $request->harga,
+            'stok'             => $request->stok,
+            'deskripsi_produk' => $request->deskripsi_produk,
+        ];
+        
+        $affected = DB::table('produk')->where('id_produk', $id)->update($data);
+        
+        if ($affected === 0) {
+            DB::table('products')->where('id', $id)->update($data);
+        }
+        
+        return redirect('/admin/produk/daftar')->with('success', 'Data produk berhasil diperbarui!');
     }
 
     public function pesanan()
@@ -156,4 +145,40 @@ class ProdukController extends Controller
         }
         return view('admin.pesanan', compact('pesanan'));
     }
-}
+
+    public function indexPelanggan(Request $request)
+    {
+        $query = DB::table('produk');
+
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_produk', 'like', '%' . $request->search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%')
+                  ->orWhere('deskripsi_produk', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori', $request->kategori);
+        }
+
+        if ($request->has('harga_max') && $request->harga_max != '') {
+            $query->where('harga', '<=', $request->harga_max);
+        }
+
+        $produk = $query->get();
+
+        return view('pelanggan.dashboard', compact('produk'));
+    }
+
+    public function showPelanggan($id)
+    {
+        $produk = DB::table('produk')->where('id', $id)->first() 
+                  ?? DB::table('produk')->where('id_produk', $id)->first();
+
+        if (!$produk) {
+            return redirect()->route('pelanggan.dashboard')->with('error', 'Produk tidak ditemukan!');
+        }
+
+        return view('pelanggan.detail', compact('produk'));
+    }
+
+} 

@@ -18,6 +18,18 @@
     </style>
 </head>
 <body class="bg-rose-50/50 text-slate-800 p-8 min-h-screen">
+    
+@if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        <div class="mb-8">
+            <a href="/admin/produk/daftar" class="text-rose-600 hover:text-rose-700 transition ...">
+                &larr; Kembali ke Daftar Produk
+            </a>
+            <h2 class="text-3xl font-bold text-rose-950">✏️ Edit Data Produk</h2>
 
     <div class="max-w-3xl mx-auto animate-fade-in">
         
@@ -30,38 +42,38 @@
         </div>
 
         <div class="bg-white p-8 rounded-3xl shadow-xl shadow-rose-100/50 border border-rose-100">
-            <form action="/admin/produk/update/{{ $produk->id_produk }}" method="POST" enctype="multipart/form-data">
+            <form action="/admin/produk/update/{{ $produk->id ?? $produk->id_produk }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 
                 <div class="mb-6">
                     <label class="block text-slate-700 font-medium mb-2">Nama Produk</label>
-                    <input type="text" name="nama_produk" value="{{ $produk->nama_produk }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: Serum Anti Aging Gold">
+                    <input type="text" name="nama_produk" value="{{ $produk->nama_produk ?? $produk->nama }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: Serum Anti Aging Gold">
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-slate-700 font-medium mb-2">Kategori</label>
                     <select name="kategori" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200 cursor-pointer">
-                        <option value="Skincare" {{ $produk->kategori == 'Skincare' ? 'selected' : '' }}>Skincare (Perawatan Kulit)</option>
-                        <option value="Makeup" {{ $produk->kategori == 'Makeup' ? 'selected' : '' }}>Makeup (Kosmetik)</option>
-                        <option value="Bodycare" {{ $produk->kategori == 'Bodycare' ? 'selected' : '' }}>Bodycare (Perawatan Tubuh)</option>
-                        <option value="Haircare" {{ $produk->kategori == 'Haircare' ? 'selected' : '' }}>Haircare (Perawatan Rambut)</option>
+                        <option value="Skincare" {{ ($produk->kategori ?? '') == 'Skincare' ? 'selected' : '' }}>Skincare (Perawatan Kulit)</option>
+                        <option value="Makeup" {{ ($produk->kategori ?? '') == 'Makeup' ? 'selected' : '' }}>Makeup (Kosmetik)</option>
+                        <option value="Bodycare" {{ ($produk->kategori ?? '') == 'Bodycare' ? 'selected' : '' }}>Bodycare (Perawatan Tubuh)</option>
+                        <option value="Haircare" {{ ($produk->kategori ?? '') == 'Haircare' ? 'selected' : '' }}>Haircare (Perawatan Rambut)</option>
                     </select>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                         <label class="block text-slate-700 font-medium mb-2">Harga (Rp)</label>
-                        <input type="number" name="harga" value="{{ $produk->harga }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 150000">
+                        <input type="number" name="harga" value="{{ $produk->harga ?? 0 }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 150000">
                     </div>
                     <div>
                         <label class="block text-slate-700 font-medium mb-2">Stok</label>
-                        <input type="number" name="stok" value="{{ $produk->stok }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 50">
+                        <input type="number" name="stok" value="{{ $produk->stok ?? 0 }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 50">
                     </div>
                 </div>
 
                 <div class="mb-6">
                     <label class="block text-slate-700 font-medium mb-2">Deskripsi Produk</label>
-                    <textarea name="deskripsi_produk" rows="4" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Tuliskan deskripsi lengkap produk di sini...">{{ $produk->deskripsi_produk }}</textarea>
+                    <textarea name="deskripsi_produk" rows="4" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Tuliskan deskripsi lengkap produk di sini...">{{ $produk->deskripsi_produk ?? $produk->deskripsi ?? '' }}</textarea>
                 </div>
 
                 <div class="mb-8 border-t border-rose-50 pt-6">
@@ -69,7 +81,7 @@
                     <div class="flex items-start gap-4 flex-col sm:flex-row">
                         <div class="text-center">
                             <p class="text-xs text-slate-400 mb-2 font-medium">Gambar Saat Ini:</p>
-                            <img src="{{ asset('uploads/produk/' . $produk->gambar) }}" alt="Gambar Lama" class="w-24 h-24 object-cover rounded-2xl border border-rose-100 shadow-sm">
+                            <img src="{{ asset('uploads/produk/' . ($produk->gambar ?? $produk->foto ?? 'default.png')) }}" alt="Gambar Lama" class="w-24 h-24 object-cover rounded-2xl border border-rose-100 shadow-sm">
                         </div>
                         <div class="flex-1 w-full">
                             <p class="text-xs text-slate-400 mb-2 font-medium">Unggah Gambar Baru (Biarkan kosong jika tidak ingin diganti):</p>
@@ -88,3 +100,9 @@
                     </button>
                 </div>
             </form>
+        </div>
+        
+    </div>
+
+</body>
+</html>
