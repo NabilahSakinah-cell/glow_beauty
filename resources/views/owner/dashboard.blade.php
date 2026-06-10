@@ -33,12 +33,33 @@
             </a>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-8">
             <div class="bg-gradient-to-br from-rose-600 to-rose-700 p-8 rounded-3xl shadow-xl shadow-rose-200 text-white transform hover:scale-[1.01] transition-all duration-300">
                 <p class="text-rose-100 font-medium text-xs uppercase tracking-wider">Omzet Bulan Ini 💰</p>
                 <p class="text-4xl font-bold mt-2 font-serif">Rp 45.200.000</p>
                 <div class="mt-4 inline-block bg-white/20 px-3 py-1 rounded-full text-xs font-medium">
                     ↑ 12% Performa meningkat bisnis kamu
+                    <!-- Total Produk -->
+<div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30">
+    <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">
+        Total Produk 📦
+    </p>
+    <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">120</p>
+    <p class="text-xs text-rose-600 font-medium mt-4 underline cursor-pointer italic">
+        Lihat semua produk →
+    </p>
+</div>
+
+<!-- Total Pesanan -->
+<div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30">
+    <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">
+        Total Pesanan 🧾
+    </p>
+    <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">356</p>
+    <p class="text-xs text-rose-600 font-medium mt-4 underline cursor-pointer italic">
+        Lihat semua pesanan →
+    </p>
+</div>
                 </div>
             </div>
 
@@ -68,5 +89,74 @@
         </div>
 
     </div>
+    <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 mt-8">
+    <h3 class="font-serif font-bold mb-6 text-xl text-rose-950">
+        Laporan Penjualan Bulanan 📊
+    </h3>
+    <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 mt-8">
+    <h3 class="font-serif font-bold mb-6 text-xl text-rose-950">
+        Pesanan Terbaru 📦
+    </h3>
+
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead>
+                <tr class="border-b">
+                    <th class="text-left p-3">ID Pesanan</th>
+                    <th class="text-left p-3">Pelanggan</th>
+                    <th class="text-left p-3">Tanggal</th>
+                    <th class="text-left p-3">Total</th>
+                    <th class="text-left p-3">Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr class="border-b">
+                    <td class="p-3">#ORD00123</td>
+                    <td class="p-3">Siti Aisyah</td>
+                    <td class="p-3">25 Mei 2024</td>
+                    <td class="p-3">Rp250.000</td>
+                    <td class="p-3">
+                        <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs">
+                            Selesai
+                        </span>
+                    </td>
+                </tr>
+
+                <tr class="border-b">
+                    <td class="p-3">#ORD00122</td>
+                    <td class="p-3">Budi Santoso</td>
+                    <td class="p-3">25 Mei 2024</td>
+                    <td class="p-3">Rp150.000</td>
+                    <td class="p-3">
+                        <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs">
+                            Diproses
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    <canvas id="salesChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const ctx = document.getElementById('salesChart');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+        datasets: [{
+            label: 'Penjualan',
+            data: [10000000, 12500000, 15200000, 7500000, 11000000, 14000000],
+            backgroundColor: '#e11d48'
+        }]
+    }
+});
+</script>
 </body>
 </html>
