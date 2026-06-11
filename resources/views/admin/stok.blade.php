@@ -36,9 +36,9 @@
                         <th class="py-4 px-6">NO</th>
                         <th class="py-4 px-6">GAMBAR</th>
                         <th class="py-4 px-6">NAMA BARANG</th>
+                        <th class="py-4 px-6">KATEGORI</th>
                         <th class="py-4 px-6">STOK</th>
                         <th class="py-4 px-6">HARGA</th>
-                        <th class="py-4 px-6 text-center">AKSI</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-rose-50">
@@ -49,14 +49,9 @@
                                 <img src="{{ asset('uploads/produk/' . ($item->gambar ?? 'default.png')) }}" class="w-12 h-12 rounded-lg object-cover">
                             </td>
                             <td class="py-4 px-6 font-semibold text-rose-950">{{ $item->nama_produk ?? $item->nama }}</td>
+                            <td class="py-4 px-6 text-slate-600">{{ $item->kategori ?? '-' }}</td>
                             <td class="py-4 px-6 font-bold text-rose-600">{{ $item->stok ?? 0 }}</td>
                             <td class="py-4 px-6 font-medium">Rp. {{ number_format($item->harga ?? 0, 0, ',', '.') }}</td>
-                            <td class="py-4 px-6 text-center">
-                                <div class="flex justify-center gap-3">
-                                    <a href="{{ url('/admin/produk/edit/' . ($item->id ?? $item->id_produk)) }}" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-pen-to-square"></i></a>
-                                    <a href="{{ url('/admin/produk/hapus/' . ($item->id ?? $item->id_produk)) }}" class="text-red-400 hover:text-red-600" onclick="return confirm('Hapus?')"><i class="fa-solid fa-trash"></i></a>
-                                </div>
-                            </td>
                         </tr>
                     @empty
                         <tr>
