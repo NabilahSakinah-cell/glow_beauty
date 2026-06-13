@@ -10,10 +10,8 @@ use App\Http\Controllers\ProdukController;
 // ==========================================
 // Halaman Utama / Landing Page
 // ==========================================
-Route::get('/', function () {
-    return view('welcome');
-});
-
+Route::get('/', [ProdukController::class, 'index'])->name('home');
+Route::get('/pelanggan/dashboard', [ProdukController::class, 'index'])->name('pelanggan.dashboard');
 // ==========================================
 // JALUR PELANGGAN (Form Login & Register)
 // ==========================================
@@ -74,11 +72,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function() {
         return redirect()->route('pelanggan.dashboard');
     });
+    
+    Route::post('/keranjang/tambah/{id}', [App\Http\Controllers\ProdukController::class, 'tambahKeranjang'])
+     ->name('keranjang.tambah');
+
+    // Tambahkan ini di dalam group middleware agar aman
+    Route::post('/keranjang/checkout', [App\Http\Controllers\ProdukController::class, 'checkout'])
+     ->name('keranjang.checkout');
 
     // PERBAIKAN 2: Rute resmi katalog pelanggan yang terhubung ke database via Controller
-    Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexPelanggan'])->name('pelanggan.dashboard');
+    Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexpelanggan'])->name('pelanggan.dashboard');
 
     Route::get('/katalog', function () {
         return view('pelanggan.katalog');
     })->name('pelanggan.katalog');
+
+    Route::get('/keranjang', [App\Http\Controllers\ProdukController::class, 'keranjang'])->name('keranjang.index');
+
 });

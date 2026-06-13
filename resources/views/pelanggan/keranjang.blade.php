@@ -15,29 +15,25 @@
         <div class="bg-white rounded-2xl shadow-sm border border-rose-100 overflow-hidden">
             <div class="grid grid-cols-12 gap-4 p-4 border-b border-rose-50 text-sm font-semibold text-rose-600 bg-rose-50/50">
                 <div class="col-span-6">Produk</div>
-                <div class="col-span-2 text-center">Harga Satuan</div>
+                <div class="col-span-2 text-center">Harga</div>
                 <div class="col-span-2 text-center">Jumlah</div>
                 <div class="col-span-2 text-center">Subtotal</div>
             </div>
 
             @foreach($keranjang as $item)
-            <div class="grid grid-cols-12 gap-4 p-4 border-b border-rose-50 items-center hover:bg-rose-50/30 transition">
-                <div class="col-span-6 flex items-center gap-4">
-    <div class="w-16 h-16 bg-rose-50 rounded-lg overflow-hidden border border-rose-100 flex items-center justify-center">
-        @if(!empty($item->gambar))
-            <img src="{{ asset('uploads/produk/' . $item->gambar) }}" class="w-full h-full object-cover" alt="{{ $item->nama_produk }}">
-        @else
-            <i class="fa-solid fa-box-open text-rose-300"></i>
-        @endif
-    </div>
-    <span class="font-medium text-gray-700">{{ $item->nama_produk }}</span>
-</div>
-                <div class="col-span-2 text-center text-gray-600">Rp {{ number_format($item->harga, 0, ',', '.') }}</div>
-                <div class="col-span-2 text-center">
-                    <span class="px-4 py-1 border border-rose-200 rounded-md font-semibold text-rose-700 bg-rose-50">{{ $item->jumlah }}</span>
+            <div class="grid grid-cols-12 gap-4 items-center border-b p-4">
+                <div class="col-span-6 font-bold flex items-center gap-4">
+                    <img src="{{ asset('uploads/produk/' . $item->gambar) }}" class="w-12 h-12 object-cover rounded-lg">
+                    {{ $item->nama_produk }}
                 </div>
+                <div class="col-span-2 text-center">Rp {{ number_format($item->harga, 0, ',', '.') }}</div>
+                
+                <div class="col-span-2 text-center">
+                    {{ $item->total_jumlah }}
+                </div>        
+                
                 <div class="col-span-2 text-center font-bold text-rose-600">
-                    Rp {{ number_format($item->harga * $item->jumlah, 0, ',', '.') }}
+                    Rp {{ number_format($item->harga * $item->total_jumlah, 0, ',', '.') }}
                 </div>
             </div>
             @endforeach
@@ -52,7 +48,7 @@
                 <div class="text-right">
                     <p class="text-sm text-gray-500">Total Pembayaran</p>
                     <p class="text-2xl font-bold text-rose-600">
-                        Rp {{ number_format($keranjang->sum(fn($item) => $item->harga * $item->jumlah), 0, ',', '.') }}
+                        Rp {{ number_format($keranjang->sum(fn($item) => $item->harga * $item->total_jumlah), 0, ',', '.') }}
                     </p>
                 </div>
                 

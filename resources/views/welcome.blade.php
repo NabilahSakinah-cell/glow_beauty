@@ -44,11 +44,37 @@
                 <div class="md:w-1/2 flex justify-center relative">
                     <div class="w-80 h-80 bg-rose-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 absolute animate-pulse"></div>
                     <div class="bg-rose-100 w-72 h-96 rounded-t-full border-4 border-white shadow-2xl flex items-center justify-center">
-                         <span class="text-rose-300 font-serif text-xl italic">Glow Beauty Image</span>
+                         <span class="text-rose-300 font-serif text-xl italic">Glow Beauty </span>
                     </div>
                 </div>
             </div>
-        </header>
+</header> 
+
+        <section class="max-w-7xl mx-auto px-4 py-12">
+    <h2 class="text-3xl font-serif font-bold text-rose-900 mb-12 text-center">Produk Terlaris</h2>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @forelse($produk as $item)
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100 flex flex-col h-full">
+            <div class="w-full h-48 overflow-hidden rounded-xl mb-4 bg-gray-50 flex items-center justify-center">
+                <img src="{{ asset('uploads/produk/' . ($item->gambar ?? 'default.png')) }}" 
+                     class="w-full h-full object-cover" 
+                     alt="{{ $item->nama_produk }}">
+            </div>
+            
+            <h3 class="font-bold text-gray-800">{{ $item->nama_produk }}</h3>
+            <p class="text-pink-600 font-semibold mb-4">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
+            
+            <button class="mt-auto w-full bg-rose-600 text-white py-2 rounded-xl font-bold hover:bg-rose-700 transition">
+                Beli Sekarang
+            </button>
+        </div>
+        @empty
+            <p class="col-span-full text-center text-gray-500">Belum ada produk.</p>
+        @endforelse
+    </div>
+</section>
+
 
         <section class="py-20 bg-rose-50">
             <div class="max-w-7xl mx-auto px-4 text-center">

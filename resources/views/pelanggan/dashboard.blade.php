@@ -35,7 +35,18 @@
         </div>
 
         <h2 class="text-xl font-bold mb-6 text-rose-950">Katalog Produk Terpopuler</h2>
-
+        
+        <form action="{{ route('pelanggan.dashboard') }}" method="GET" class="flex gap-2 mb-6">
+    <input type="text" 
+           name="search" 
+           value="{{ request('search') }}" 
+           placeholder="Cari produk..." 
+           class="border border-rose-200 rounded-xl px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-rose-300">
+           
+    <button type="submit" class="bg-rose-600 text-white px-6 py-2 rounded-xl hover:bg-rose-700 transition">
+        Cari
+    </button>
+</form>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             @if(isset($produk) && count($produk) > 0)
                 @foreach($produk as $item)
@@ -65,9 +76,12 @@
                             <p class="text-rose-600 font-bold text-sm">
                                 Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}
                             </p>
-                            <button class="w-full mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
-                            </button>
+                            <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST" class="relative z-20">
+    @csrf
+    <button type="submit" class="w-full mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer">
+        <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
+    </button>
+</form>
                         </div>
                     </div>
                 @endforeach

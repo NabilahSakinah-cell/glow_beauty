@@ -56,3 +56,38 @@ body{
     background:#d61c59;
     color:white;
 }
+
+/* Jangan gunakan height: auto secara global pada img */
+img {
+    max-width: 100%;
+    display: block;
+}
+
+.grid {
+    width: 100%;
+}
+
+/* Biarkan class Tailwind yang mengatur ukuran gambar */
+.product-img {
+    width: 100%;
+    height: 200px; 
+    object-fit: cover;
+}
+    .product-card {
+    background: white;
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid #fecdd3; /* Border warna rose-200 */
+    display: flex;
+    flex-direction: column;
+}
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Memastikan gambar selalu berada di tengah dan proporsional */
+.object-cover {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+}
