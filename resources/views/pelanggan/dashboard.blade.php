@@ -62,26 +62,52 @@
                                      class="w-full h-full object-cover object-center absolute inset-0" 
                                      alt="Produk Glow Beauty"
                                      onerror="this.onerror=null; this.src='{{ asset('uploads/produk/default.png') }}';">
+                                @if(isset($item->diskon) && $item->diskon > 0)
+                                    <span class="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm z-10">
+                                    {{ $item->diskon }}% OFF
+                                    </span>
+                                @endif
                             </div>
 
+                            <div class="flex justify-between items-center">
                             <span class="text-[10px] font-bold text-rose-500 uppercase bg-rose-50 px-2 py-1 rounded-md tracking-wider">
                                 {{ $item->kategori ?? 'Umum' }}
                             </span>
+                            
+                                @if(isset($item->rating) && $item->rating > 0)
+                                    <span class="text-xs text-amber-500 font-semibold flex items-center gap-1 bg-amber-50 px-2 py-0.5 rounded-md">
+                                        <i class="fa-solid fa-star text-[10px]"></i> {{ $item->rating }}
+                                    </span>
+                                @endif
+                        </div>
                             <h3 class="font-semibold text-gray-800 text-sm mt-2 line-clamp-2 min-h-[40px]">
                                 {{ $item->nama ?? $item->nama_produk ?? 'Produk Kecantikan' }}
                             </h3>
                         </div>
 
                         <div class="mt-auto">
-                            <p class="text-rose-600 font-bold text-sm">
-                                Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}
-                            </p>
+                                @if(isset($item->diskon) && $item->diskon > 0)
+                                @php
+                                    $hargaDiskon = ($item->harga ?? 0) - (($item->harga ?? 0) * ($item->diskon / 100));
+                                @endphp
+                                <p class="text-gray-400 line-through text-[11px] -mb-1">
+                                    Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}
+                                </p>
+                                <p class="text-rose-600 font-bold text-sm">
+                                    Rp {{ number_format($hargaDiskon, 0, ',', '.') }}
+                                </p>
+                            @else
+                                <p class="text-rose-600 font-bold text-sm">
+                                    Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}
+                                </p>
+                            @endif
                             <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST" class="relative z-20">
-    @csrf
-    <button type="submit" class="w-full mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer">
-        <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
-    </button>
-</form>
+
+                        @csrf
+                        <button type="submit" class="w-full mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer">
+                            <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
+                        </button>
+                    </form>
                         </div>
                     </div>
                 @endforeach

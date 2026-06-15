@@ -10,8 +10,9 @@ use App\Http\Controllers\ProdukController;
 // ==========================================
 // Halaman Utama / Landing Page
 // ==========================================
-Route::get('/', [ProdukController::class, 'index'])->name('home');
+Route::get('/', [ProdukController::class, 'indexpelanggan'])->name('home');
 Route::get('/pelanggan/dashboard', [ProdukController::class, 'index'])->name('pelanggan.dashboard');
+
 // ==========================================
 // JALUR PELANGGAN (Form Login & Register)
 // ==========================================
@@ -33,30 +34,22 @@ Route::get('/owner', [OwnerController::class, 'index'])->name('owner.index');
 // ==========================================
 // JALUR ADMIN (Manajemen Produk & Katalog)
 // ==========================================
-// 1. Halaman Form Login Admin
 Route::get('/login-admin', function () {
     return view('admin.login'); 
 });
 Route::post('/login-admin', [AdminController::class, 'login']);
 
-// 2. Dashboard Utama Admin
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-// Data Pesanan
 Route::get('/admin/pesanan', function () {
-
     $pesanan = [];
-
     return view('admin.pesanan', compact('pesanan'));
-
 })->name('admin.pesanan');
 
-// 3. Rute Fitur Kerja Admin
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
 Route::get('/admin/stok', [ProdukController::class, 'stok'])->name('admin.stok'); 
 Route::get('/admin/produk', [ProdukController::class, 'create'])->name('admin.produk.create'); 
 
-// Jalur Penyimpanan Produk (Kunci Utama Masuk Database)
 Route::post('/admin/produk/simpan', [ProdukController::class, 'store'])->name('admin.produk.store');
 
 Route::get('/admin/produk/edit/{id}', [ProdukController::class, 'edit']); 
@@ -68,25 +61,22 @@ Route::get('/admin/produk/hapus/{id}', [ProdukController::class, 'hapus_produk']
 // ==========================================
 Route::middleware(['auth'])->group(function () {
     
-    // PERBAIKAN 1: Pengalihan bawaan dipindahkan ke DALAM proteksi auth agar aman
     Route::get('/dashboard', function() {
         return redirect()->route('pelanggan.dashboard');
     });
     
-    Route::post('/keranjang/tambah/{id}', [App\Http\Controllers\ProdukController::class, 'tambahKeranjang'])
+    Route::post('/keranjang/tambah/{id}', [ProdukController::class, 'tambahKeranjang'])
      ->name('keranjang.tambah');
 
-    // Tambahkan ini di dalam group middleware agar aman
-    Route::post('/keranjang/checkout', [App\Http\Controllers\ProdukController::class, 'checkout'])
+    Route::post('/keranjang/checkout', [ProdukController::class, 'checkout'])
      ->name('keranjang.checkout');
 
-    // PERBAIKAN 2: Rute resmi katalog pelanggan yang terhubung ke database via Controller
     Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexpelanggan'])->name('pelanggan.dashboard');
 
     Route::get('/katalog', function () {
         return view('pelanggan.katalog');
     })->name('pelanggan.katalog');
 
-    Route::get('/keranjang', [App\Http\Controllers\ProdukController::class, 'keranjang'])->name('keranjang.index');
-
+    // ✨ TYPO DOUBLE CONTROLLER SUDAH DIPERBAIKI DI SINI:
+    Route::get('/keranjang', [ProdukController::class, 'keranjang'])->name('keranjang.index');
 });

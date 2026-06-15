@@ -123,15 +123,9 @@ class ProdukController extends Controller
             'deskripsi_produk' => $request->deskripsi_produk,
         ];
         
-        $affected = DB::table('produk')->where('id_produk', $id)->update($data);
-        
-        if ($affected === 0) {
-            DB::table('products')->where('id', $id)->update($data);
-        }
-        
+       $affected = DB::table('produk')->where('id_produk', $id)->update($data);
         return redirect('/admin/produk/daftar')->with('success', 'Data produk berhasil diperbarui!');
     }
-
     public function pesanan()
     {
         try {
@@ -145,39 +139,29 @@ class ProdukController extends Controller
         }
         return view('admin.pesanan', compact('pesanan'));
     }
-    
-    public function indexpelanggan(Request $request)
-{
-    // 1. Ambil data produk dengan aman
-    $query = DB::table(Schema::hasTable('produk') ? 'produk' : 'products');
 
-    // 2. Logika Pencarian
-    if ($request->has('search') && $request->search != '') {
-        $searchTerm = '%' . $request->search . '%';
-        $query->where(function($q) use ($searchTerm) {
-            $q->where('nama_produk', 'like', $searchTerm)
-              ->orWhere('deskripsi_produk', 'like', $searchTerm); 
-        });
-    } // <-- Hapus satu '}' di sini sebelumnya
+    public function indexPelanggan(Request $request)
+    {    
+        $query = DB::table('produk');
 
-    // 3. Logika Filter
-    if ($request->has('kategori') && $request->kategori != '') {
-        $query->where('kategori', $request->kategori);
-    }
+        if ($request->has('search') && $request->search != '') {
+            $query->where('nama_produk', 'like', '%' . $request->search . '%')
+                  ->orWhere('deskripsi', 'like', '%' . $request->search . '%')
+                  ->orWhere('deskripsi_produk', 'like', '%' . $request->search . '%');
+        }
 
-    if ($request->has('harga_max') && $request->harga_max != '') {
-        $query->where('harga', '<=', $request->harga_max);
-    }
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori', $request->kategori);
+        }
 
-    $produk = $query->get();
+        if ($request->has('harga_max') && $request->harga_max != '') {
+            $query->where('harga', '<=', $request->harga_max);
+        }
 
-    // 4. Arahkan berdasarkan URL
-    if (request()->is('pelanggan/dashboard')) {
+        $produk = $query->get();
+
         return view('pelanggan.dashboard', compact('produk'));
     }
-
-    return view('welcome', compact('produk'));
-}
 
     public function showPelanggan($id)
     {
@@ -191,54 +175,4 @@ class ProdukController extends Controller
         return view('pelanggan.detail', compact('produk'));
     }
 
-    public function tambahKeranjang(Request $request, $id)
-{
-    // 1. Cek apakah produk sudah ada di tabel detail_keranjang
-    $itemAda = DB::table('detail_keranjang')->where('id_produk', $id)->first();
-
-    if ($itemAda) {
-        // 2. Jika ada, UPDATE: Tambahkan jumlahnya saja (+1)
-        DB::table('detail_keranjang')
-            ->where('id_produk', $id)
-            ->increment('jumlah', 1);
-    } else {
-        // 3. Jika belum ada, baru INSERT: Tambahkan data baru
-        // Ambil info produk dari tabel produk agar nama & harga tetap akurat
-        $produk = DB::table('produk')->where('id_produk', $id)->first();
-
-        DB::table('detail_keranjang')->insert([
-            'id_keranjang' => 1, // Sesuaikan dengan sistem session keranjang Anda
-            'id_produk'    => $id,
-            'nama_produk'  => $produk->nama_produk,
-            'harga'        => $produk->harga,
-            'jumlah'       => 1,
-        ]);
-    }
-
-    return redirect()->route('keranjang.index')->with('success', 'Produk ditambahkan!');
-}
-public function keranjang()
-{
-    $keranjang = DB::table('detail_keranjang')
-        // Hubungkan tabel detail_keranjang dengan tabel produk
-        ->join('produk', 'detail_keranjang.id_produk', '=', 'produk.id_produk')
-        // Pilih kolom yang diperlukan (pastikan 'gambar' diambil dari tabel 'produk')
-        ->select(
-            'detail_keranjang.id_produk', 
-            'detail_keranjang.nama_produk', 
-            'detail_keranjang.harga', 
-            'produk.gambar', 
-            DB::raw('SUM(detail_keranjang.jumlah) as total_jumlah')
-        )
-        // Grouping berdasarkan kolom yang diseleksi
-        ->groupBy(
-            'detail_keranjang.id_produk', 
-            'detail_keranjang.nama_produk', 
-            'detail_keranjang.harga', 
-            'produk.gambar'
-        )
-        ->get();
-
-    return view('pelanggan.keranjang', compact('keranjang'));
-}
-}
+} 
