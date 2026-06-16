@@ -66,12 +66,9 @@
                 <div class="text-3xl mb-4 inline-block transition-transform duration-300 group-hover:animate-bounce">📜</div>
                 <h3 class="text-lg font-bold mb-2 text-rose-900 group-hover:text-rose-600 transition-colors">Data Pesanan</h3>
                 <p class="text-sm text-slate-500 mb-5">Lihat list pesanan masuk dari pelanggan dan kelola status pengirimannya.</p>
-                <a href="/admin/pesanan" class="inline-block w-full text-center bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium py-2.5 rounded-xl transition-all duration-300 transform group-hover:scale-[1.02] active:scale-95 shadow-sm shadow-rose-200">
-                    <a href="{{ route('admin.pesanan') }}"
-             class="bg-pink-500 text-white px-4 py-2 rounded-xl">
-                 Lihat Pesanan
-                </a>
-                </a>
+                <a href="{{ route('admin.pesanan') }}" class="inline-block w-full text-center bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium py-2.5 rounded-xl transition-all duration-300 transform group-hover:scale-[1.02] active:scale-95 shadow-sm shadow-rose-200">
+    Lihat Pesanan
+</a>
             </div>
 
         </div>
