@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Schema;
 
 class ProdukController extends Controller
 { 
+    // ==========================================
+    // 🛠️ BAGIAN ADMIN (MANAJEMEN PRODUK)
+    // ==========================================
+
     public function dashboard()
     {
         return view('admin.dashboard');
@@ -123,9 +127,20 @@ class ProdukController extends Controller
             'deskripsi_produk' => $request->deskripsi_produk,
         ];
         
-       $affected = DB::table('produk')->where('id_produk', $id)->update($data);
+        DB::table('produk')->where('id_produk', $id)->update($data);
         return redirect('/admin/produk/daftar')->with('success', 'Data produk berhasil diperbarui!');
     }
+
+    public function hapus_produk($id)
+    {
+        try {
+            DB::table('produk')->where('id_produk', $id)->orWhere('id', $id)->delete();
+        } catch (\Throwable $e) {
+            DB::table('products')->where('id', $id)->delete();
+        }
+        return redirect('/admin/produk/daftar')->with('success', 'Data produk berhasil dihapus!');
+    }
+
     public function pesanan()
     {
         try {
@@ -139,6 +154,11 @@ class ProdukController extends Controller
         }
         return view('admin.pesanan', compact('pesanan'));
     }
+
+
+    // ==========================================
+    // 👤 BAGIAN PELANGGAN (KATALOG & DETAIL)
+    // ==========================================
 
     public function indexPelanggan(Request $request)
     {    
@@ -163,7 +183,7 @@ class ProdukController extends Controller
         return view('pelanggan.dashboard', compact('produk'));
     }
 
-    public function showPelanggan($id)
+    public function detail($id)
     {
         $produk = DB::table('produk')->where('id', $id)->first() 
                   ?? DB::table('produk')->where('id_produk', $id)->first();
@@ -175,4 +195,56 @@ class ProdukController extends Controller
         return view('pelanggan.detail', compact('produk'));
     }
 
-} 
+
+    // ==========================================
+    // 🛒 FITUR KERANJANG BELANJA (SESSION)
+    // ==========================================
+
+    public function keranjang()
+    {
+        $keranjangSession = session()->get('keranjang', []);
+        
+        $keranjang = collect(json_decode(json_encode(array_values($keranjangSession))));
+        
+        return view('keranjang', compact('keranjang'));
+    }
+
+    public function tambahKeranjang($id)
+    {
+        try {
+            $produk = DB::table('produk')->where('id_produk', $id)->orWhere('id', $id)->first();
+        } catch (\Throwable $e) {
+            $produk = DB::table('products')->where('id', $id)->first();
+        }
+
+        if (!$produk) {
+            return back()->with('error', 'Produk tidak ditemukan!');
+        }
+
+        $keranjang = session()->get('keranjang', []);
+
+        if (isset($keranjang[$id])) {
+            $keranjang[$id]['total_jumlah']++; 
+        } else {
+            $keranjang[$id] = [
+                "id" => $id,
+                "nama_produk" => $produk->nama_produk ?? $produk->nama,
+                "harga" => $produk->harga,
+                "gambar" => $produk->gambar ?? $produk->foto ?? 'default.png',
+                "total_jumlah" => 1
+            ];
+        }
+
+        session()->put('keranjang', $keranjang);
+
+        // KODE INI YANG MEMBUAT LAYAR LANGSUNG PINDAH KE HALAMAN KERANJANG
+        return redirect('/keranjang')->with('success', 'Produk berhasil masuk keranjang! 🛒');
+    }
+
+    public function checkout()
+    {
+        session()->forget('keranjang');
+        
+        return redirect('/pelanggan/dashboard')->with('success', 'Checkout berhasil! Pesanan kamu sedang diproses. ✨');
+    }
+}
