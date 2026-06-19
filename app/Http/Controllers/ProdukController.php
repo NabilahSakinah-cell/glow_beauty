@@ -220,7 +220,13 @@ class ProdukController extends Controller
     $produk = DB::table('produk')->where('id_produk', $id)->first();
     if (!$produk) return back()->with('error', 'Produk tidak ditemukan!');
 
-    // 2. Cek apakah sudah ada di keranjang
+     // 2. Hitung harga setelah diskon (kalau ada diskon)
+    $hargaFinal = $produk->harga;
+    if (isset($produk->diskon) && $produk->diskon > 0) {
+        $hargaFinal = $produk->harga - ($produk->harga * ($produk->diskon / 100));
+    }
+
+    // 3. Cek apakah sudah ada di keranjang
     $ada = DB::table('detail_keranjang')
                 ->where('id_keranjang', 1)
                 ->where('id_produk', $id)
@@ -237,7 +243,7 @@ class ProdukController extends Controller
             'id_keranjang' => 1,
             'id_produk'    => $produk->id_produk,
             'nama_produk'  => $produk->nama_produk,
-            'harga'        => $produk->harga,
+            'harga'        => $hargaFinal,
             'jumlah'       => 1
         ]);
     }
