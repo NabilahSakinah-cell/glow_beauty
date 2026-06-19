@@ -9,7 +9,7 @@ class AdminController extends Controller
 {
     public function login(Request $request)
     {
-        // Ambil data admin dari database
+        // 1. Ambil data admin dari database
         $admin = DB::table('admin')
             ->where('email', $request->email)
             ->where('password', $request->password)
@@ -24,8 +24,27 @@ class AdminController extends Controller
             return redirect('/admin/dashboard');
         }
 
-        // 💡 MODE BYPASS UNTUK TESTING:
-        // Jika akun belum terdaftar di database, gunakan kredensial darurat ini agar bisa masuk dashboard
+        // 💡 CEK APAKAH YANG LOGIN ADALAH OWNER VIA FORM ADMIN
+        $owner = DB::table('owner')
+            ->where('email', $request->email)
+            ->where('password', $request->password)
+            ->first();
+
+        if ($owner) {
+            // Jika cocok dengan tabel owner, set session Admin & Owner sekaligus
+            session([
+                'owner_logged_in' => true, 
+                'owner_nama' => $owner->nama,
+                'owner_id' => $owner->id_owner,
+                
+                'admin_logged_in' => true, // Supaya lolos gate dashboard admin
+                'admin_nama' => $owner->nama . ' (Owner Workspace)',
+                'admin_id' => $owner->id_owner
+            ]);
+            return redirect('/admin/dashboard');
+        }
+
+        // 💡 MODE BYPASS UNTUK TESTING (Bawaan Anda):
         if ($request->email == 'admin@gmail.com' && $request->password == 'admin123') {
             session([
                 'admin_logged_in' => true,
@@ -76,21 +95,22 @@ class AdminController extends Controller
     }
 
     public function pesanan() {
-    if (!session('admin_logged_in')) return redirect('/login-admin');
+        if (!session('admin_logged_in')) return redirect('/login-admin');
 
-    // Mengambil data pesanan saja (tanpa join agar tidak error)
-    $pesanan = DB::table('pesanan')->orderBy('id_pesanan', 'desc')->get();
+        // Mengambil data pesanan saja (tanpa join agar tidak error)
+        $pesanan = DB::table('pesanan')->orderBy('id_pesanan', 'desc')->get();
 
-    // Statistik tetap sama
-    $stats = [
-        'baru'    => DB::table('pesanan')->where('status', 'Pending')->count(),
-        'proses'  => DB::table('pesanan')->where('status', 'Diproses')->count(),
-        'dikirim' => DB::table('pesanan')->where('status', 'Dikirim')->count(),
-        'selesai' => DB::table('pesanan')->where('status', 'Selesai')->count(),
-    ];
+        // Statistik tetap sama
+        $stats = [
+            'baru'    => DB::table('pesanan')->where('status', 'Pending')->count(),
+            'proses'  => DB::table('pesanan')->where('status', 'Diproses')->count(),
+            'dikirim' => DB::table('pesanan')->where('status', 'Dikirim')->count(),
+            'selesai' => DB::table('pesanan')->where('status', 'Selesai')->count(),
+        ];
 
-    return view('admin.pesanan', compact('pesanan', 'stats'));
-}
+        return view('admin.pesanan', compact('pesanan', 'stats'));
+    }
+
     public function simpan_produk(Request $request) {
         // Validasi input yang mendukung nama kolom 'nama'/'nama_produk' dan 'foto'/'gambar'
         $request->validate([
