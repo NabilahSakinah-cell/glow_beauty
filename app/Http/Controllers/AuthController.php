@@ -3,36 +3,50 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User; // Pastikan model User bawaan Laravel sudah ada
+use App\Models\User; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // ==========================================
+    // 📝 BAGIAN REGISTER (DAFTAR AKUN)
+    // ==========================================
+
     // Menampilkan Halaman Register Pelanggan
     public function showRegister()
     {
-        return view('auth.register'); // Sesuaikan letak file register.blade.php kamu
+        return view('auth.register'); 
     }
 
-    // Memproses Pendaftaran Data Pelanggan Baru (Poin A)
+    // Memproses Pendaftaran & AUTO-LOGIN
     public function register(Request $request)
     {
+        // 1. Validasi data yang diisi pelanggan
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
 
-        User::create([
+        // 2. Simpan akun baru ke database
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        // Kirim Notifikasi Berhasil (Poin L)
-        return redirect('/login')->with('success', 'Pendaftaran berhasil! Silakan masuk.');
+        // 3. ✨ AUTO LOGIN: Langsung loginkan user yang baru dibuat!
+        Auth::login($user);
+
+        // 4. Arahkan ke halaman Katalog ala Shopee
+        return redirect('/katalog')->with('success', 'Akun berhasil dibuat! Kamu sudah otomatis login. ✨');
     }
+
+
+    // ==========================================
+    // 🔐 BAGIAN LOGIN (MASUK AKUN)
+    // ==========================================
 
     // Menampilkan Halaman Login Pelanggan
     public function showLogin()
@@ -40,33 +54,43 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // Memproses Masuk Akun Pelanggan (Poin B)
+    // Memproses Masuk Akun Pelanggan
     public function login(Request $request)
     {
+        // 1. Validasi inputan
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
+        // 2. Cek kecocokan email dan password
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
             
-            // HANYA BAGIAN INI YANG DIGANTI ALAMAT TUJUANNYA KE DASHBOARD KATALOG
-            return redirect('/pelanggan/dashboard')->with('success', 'Selamat datang di Glow Beauty! ✨');
+            // 3. Jika berhasil, arahkan ke Katalog
+            return redirect('/katalog')->with('success', 'Selamat datang kembali di Glow Beauty! ✨');
         }
 
-        // Kirim Notifikasi Gagal (Poin L)
+        // 4. Jika gagal, kembalikan dengan pesan error
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
+            'email' => 'Email atau password yang kamu masukkan salah.',
         ])->onlyInput('email');
     }
+
+
+    // ==========================================
+    // 🚪 BAGIAN LOGOUT (KELUAR AKUN)
+    // ==========================================
 
     // Keluar Akun Pelanggan
     public function logout(Request $request)
     {
         Auth::logout();
+        
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login')->with('success', 'Anda telah keluar.');
+        
+        // ✨ KEMBALI KE LANDING PAGE: Arahkan ke '/' sesuai permintaanmu
+        return redirect('/')->with('success', 'Kamu telah berhasil logout. Sampai jumpa lagi! ✨');
     }
 }

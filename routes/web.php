@@ -1,21 +1,37 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdminController; 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProdukController; 
 
 // ==========================================
-// Halaman Utama / Landing Page
+// 🟢 JALUR PUBLIK (BISA DIAKSES TANPA LOGIN)
 // ==========================================
+
+// 1. Landing Page (Tampilan awal web saat pertama kali dibuka)
 Route::get('/', function () {
-    return view('welcome');
-});
+    // Ambil 4 produk dari database untuk bagian "Produk Terlaris"
+    try {
+        $produk = DB::table('produk')->take(4)->get();
+    } catch (\Throwable $e) {
+        $produk = DB::table('products')->take(4)->get();
+    }
+    
+    return view('welcome', compact('produk')); 
+})->name('home');
+
+// 2. Halaman Katalog Produk ala Shopee (Bisa lihat produk tanpa akun)
+Route::get('/katalog', [ProdukController::class, 'indexpelanggan'])->name('katalog');
+
+// 3. Detail Produk (Bebas lihat detail & rating tanpa login)
+Route::get('/produk/{id}', [ProdukController::class, 'detail'])->name('produk.detail');
+
 
 // ==========================================
-// JALUR PELANGGAN (Form Login & Register)
+// 👤 JALUR PELANGGAN (Form Login & Register)
 // ==========================================
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -23,8 +39,32 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
 // ==========================================
-// JALUR OWNER (Sistem Manual Session Owner)
+// 🔴 JALUR TRANSAKSI (HARUS LOGIN DULU)
+// ==========================================
+Route::middleware(['auth'])->group(function () {
+    
+    // Jika mengetik /dashboard, otomatis diarahkan ke halaman katalog
+    Route::get('/dashboard', function() {
+        return redirect()->route('katalog');
+    });
+    
+    // Dashboard Pelanggan
+    Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexpelanggan'])->name('pelanggan.dashboard');
+
+    // Fitur Keranjang Belanja & Checkout (Aman terlindungi)
+    Route::get('/keranjang', [ProdukController::class, 'keranjang'])->name('keranjang.index');
+    Route::post('/keranjang/tambah/{id}', [ProdukController::class, 'tambahKeranjang'])->name('keranjang.tambah');
+    Route::post('/keranjang/checkout', [ProdukController::class, 'checkout'])->name('keranjang.checkout');
+    Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update'); 
+    Route::get('/keranjang/checkout-form', [ProdukController::class, 'checkoutForm'])->name('keranjang.checkout.form');
+
+});
+
+
+// ==========================================
+// 👑 JALUR OWNER (Sistem Manual Session Owner)
 // ==========================================
 Route::get('/login-owner', function () {
     return view('owner.owner'); 
@@ -32,53 +72,26 @@ Route::get('/login-owner', function () {
 Route::post('/login-owner', [OwnerController::class, 'login']);
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner.index');
 
+
 // ==========================================
-// JALUR ADMIN (Manajemen Produk & Katalog)
+// 🛠️ JALUR ADMIN (Manajemen Produk & Katalog)
 // ==========================================
-// 1. Halaman Form Login Admin
 Route::get('/login-admin', function () {
     return view('admin.login'); 
 });
 Route::post('/login-admin', [AdminController::class, 'login']);
 
-// 2. Dashboard Utama Admin
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-// Data Pesanan
-Route::get('/admin/pesanan', function () {
+Route::get('/admin/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
 
-    $pesanan = [];
-
-    return view('admin.pesanan', compact('pesanan'));
-
-})->name('admin.pesanan');
-
-// 3. Rute Fitur Kerja Admin
+// Kelola Produk & Stok
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
 Route::get('/admin/stok', [ProdukController::class, 'stok'])->name('admin.stok'); 
 Route::get('/admin/produk', [ProdukController::class, 'create'])->name('admin.produk.create'); 
-
-// Jalur Penyimpanan Produk (Kunci Utama Masuk Database)
 Route::post('/admin/produk/simpan', [ProdukController::class, 'store'])->name('admin.produk.store');
-
 Route::get('/admin/produk/edit/{id}', [ProdukController::class, 'edit']); 
 Route::post('/admin/produk/update/{id}', [ProdukController::class, 'update_produk']);
 Route::get('/admin/produk/hapus/{id}', [ProdukController::class, 'hapus_produk']);
 
-// ==========================================
-// JALUR PROTEKSI PELANGGAN (Middleware Auth)
-// ==========================================
-Route::middleware(['auth'])->group(function () {
-    
-    // PERBAIKAN 1: Pengalihan bawaan dipindahkan ke DALAM proteksi auth agar aman
-    Route::get('/dashboard', function() {
-        return redirect()->route('pelanggan.dashboard');
-    });
-
-    // PERBAIKAN 2: Rute resmi katalog pelanggan yang terhubung ke database via Controller
-    Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexPelanggan'])->name('pelanggan.dashboard');
-
-    Route::get('/katalog', function () {
-        return view('pelanggan.katalog');
-    })->name('pelanggan.katalog');
-});
+Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update');

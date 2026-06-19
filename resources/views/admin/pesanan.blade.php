@@ -56,55 +56,43 @@
 
     <!-- Statistik -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
-
         <div class="bg-white rounded-2xl p-5 shadow-lg border border-yellow-100">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm">Pesanan Baru</p>
-                    <h3 class="text-3xl font-bold text-yellow-500">12</h3>
+                    <h3 class="text-3xl font-bold text-yellow-500">{{ $stats['baru'] }}</h3>
                 </div>
-                <div class="bg-yellow-100 p-3 rounded-xl text-2xl">
-                    📋
-                </div>
+                <div class="bg-yellow-100 p-3 rounded-xl text-2xl">📋</div>
             </div>
         </div>
-
         <div class="bg-white rounded-2xl p-5 shadow-lg border border-blue-100">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm">Diproses</p>
-                    <h3 class="text-3xl font-bold text-blue-500">8</h3>
+                    <h3 class="text-3xl font-bold text-blue-500">{{ $stats['proses'] }}</h3>
                 </div>
-                <div class="bg-blue-100 p-3 rounded-xl text-2xl">
-                    📦
-                </div>
+                <div class="bg-blue-100 p-3 rounded-xl text-2xl">📦</div>
             </div>
         </div>
-
         <div class="bg-white rounded-2xl p-5 shadow-lg border border-pink-100">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm">Dikirim</p>
-                    <h3 class="text-3xl font-bold text-pink-500">15</h3>
+                    <h3 class="text-3xl font-bold text-pink-500">{{ $stats['dikirim'] }}</h3>
                 </div>
-                <div class="bg-pink-100 p-3 rounded-xl text-2xl">
-                    🚚
-                </div>
+                <div class="bg-pink-100 p-3 rounded-xl text-2xl">🚚</div>
             </div>
         </div>
-
         <div class="bg-white rounded-2xl p-5 shadow-lg border border-green-100">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-500 text-sm">Selesai</p>
-                    <h3 class="text-3xl font-bold text-green-500">210</h3>
+                    <h3 class="text-3xl font-bold text-green-500">{{ $stats['selesai'] }}</h3>
                 </div>
-                <div class="bg-green-100 p-3 rounded-xl text-2xl">
-                    ✔️
-                </div>
+                <div class="bg-green-100 p-3 rounded-xl text-2xl">✔️</div>
             </div>
         </div>
-
+    </div>
     </div>
 
     <!-- Filter -->
@@ -151,7 +139,7 @@
                 <tr class="bg-rose-50 text-rose-900 font-semibold text-sm">
 
                     <th class="p-4 border-b border-rose-100 text-center w-16">
-                        No
+                        Nomor
                     </th>
 
                     <th class="p-4 border-b border-rose-100">
@@ -193,7 +181,7 @@
                         </td>
 
                         <td class="p-4 font-medium text-slate-800">
-                            {{ $item->nama_pelanggan ?? 'Nama Pelanggan' }}
+                            ID Pelanggan: {{ $item->id_pelanggan }}
                         </td>
 
                         <td class="p-4 font-bold text-rose-600">

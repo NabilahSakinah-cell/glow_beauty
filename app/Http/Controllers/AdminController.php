@@ -76,10 +76,21 @@ class AdminController extends Controller
     }
 
     public function pesanan() {
-        if (!session('admin_logged_in')) return redirect('/login-admin');
-        return view('admin.pesanan'); 
-    }
+    if (!session('admin_logged_in')) return redirect('/login-admin');
 
+    // Mengambil data pesanan saja (tanpa join agar tidak error)
+    $pesanan = DB::table('pesanan')->orderBy('id_pesanan', 'desc')->get();
+
+    // Statistik tetap sama
+    $stats = [
+        'baru'    => DB::table('pesanan')->where('status', 'Pending')->count(),
+        'proses'  => DB::table('pesanan')->where('status', 'Diproses')->count(),
+        'dikirim' => DB::table('pesanan')->where('status', 'Dikirim')->count(),
+        'selesai' => DB::table('pesanan')->where('status', 'Selesai')->count(),
+    ];
+
+    return view('admin.pesanan', compact('pesanan', 'stats'));
+}
     public function simpan_produk(Request $request) {
         // Validasi input yang mendukung nama kolom 'nama'/'nama_produk' dan 'foto'/'gambar'
         $request->validate([
