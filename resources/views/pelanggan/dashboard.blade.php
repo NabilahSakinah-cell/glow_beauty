@@ -34,6 +34,14 @@
     </div>
 
     <div class="p-8 max-w-7xl mx-auto">
+            @if(session('success'))
+            <div class="mb-6">
+                <div class="bg-emerald-50 text-emerald-700 px-6 py-4 rounded-xl border border-emerald-200 font-medium">
+                    <i class="fa-solid fa-check-circle mr-2"></i> {{ session('success') }}
+                </div>
+            </div>
+            @endif
+            
         <div class="bg-gradient-to-r from-rose-400 to-pink-500 p-8 rounded-3xl text-white mb-10 shadow-md">
             <h2 class="text-3xl font-bold mb-2">Belanja Produk Favoritmu ✨</h2>
             <p class="text-rose-100 text-sm">Dapatkan diskon eksklusif khusus member Glow Beauty hari ini.</p>
@@ -85,9 +93,11 @@
                                     </span>
                                 @endif
                         </div>
-                            <h3 class="font-semibold text-gray-800 text-sm mt-2 line-clamp-2 min-h-[40px]">
+                            <a href="{{ route('produk.detail', $item->id ?? $item->id_produk) }}">
+                            <h3 class="font-semibold text-gray-800 text-sm mt-2 line-clamp-2 min-h-[40px] hover:text-rose-600 transition">
                                 {{ $item->nama ?? $item->nama_produk ?? 'Produk Kecantikan' }}
                             </h3>
+                            </a>
                         </div>
 
                         <div class="mt-auto">

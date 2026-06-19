@@ -88,7 +88,7 @@ class ProdukController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Produk kosmetik baru berhasil di-upload! ✨');
+        return redirect('/admin/produk/daftar')->with('success', 'Produk kosmetik baru berhasil di-upload! ✨');
     }
 
     public function stok()
@@ -119,6 +119,8 @@ class ProdukController extends Controller
 
     public function update_produk(Request $request, $id)
     {
+        $produk = DB::table('produk')->where('id_produk', $id)->first();
+
         $data = [
             'nama_produk'      => $request->nama_produk,
             'kategori'         => $request->kategori,
@@ -127,7 +129,19 @@ class ProdukController extends Controller
             'deskripsi_produk' => $request->deskripsi_produk,
         ];
         
-        DB::table('produk')->where('id_produk', $id)->update($data);
+        if ($request->hasFile('gambar')) {
+            if ($produk->gambar && file_exists(public_path('uploads/produk/' . $produk->gambar))) {
+                unlink(public_path('uploads/produk/' . $produk->gambar));
+        }
+
+            $file = $request->file('gambar');
+            $namaFile = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/produk'), $namaFile);
+            $data['gambar'] = $namaFile;
+        }
+
+         DB::table('produk')->where('id_produk', $id)->update($data);
+            
         return redirect('/admin/produk/daftar')->with('success', 'Data produk berhasil diperbarui!');
     }
 
@@ -187,8 +201,7 @@ class ProdukController extends Controller
 
     public function detail($id)
     {
-        $produk = DB::table('produk')->where('id', $id)->first() 
-                  ?? DB::table('produk')->where('id_produk', $id)->first();
+        $produk = DB::table('produk')->where('id_produk', $id)->first();
 
         if (!$produk) {
             return redirect()->route('pelanggan.dashboard')->with('error', 'Produk tidak ditemukan!');
@@ -297,7 +310,14 @@ public function checkout(Request $request)
             'jumlah'     => $item->jumlah,
             'subtotal'   => $item->harga * $item->jumlah
         ]);
+
+        // Pengurangan stok otomatis
+        DB::table('produk')
+            ->where('id_produk', $item->id_produk)
+            ->decrement('stok', $item->jumlah);
     }
+
+    
     // 5. Hapus keranjang
     DB::table('detail_keranjang')->where('id_keranjang', 1)->delete();
 

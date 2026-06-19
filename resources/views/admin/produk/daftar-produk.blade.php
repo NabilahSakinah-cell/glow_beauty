@@ -27,7 +27,11 @@
                     &larr; Kembali ke Dashboard
                 </a>
                 <h2 class="text-3xl font-bold text-rose-950">Daftar Produk Kosmetik 💄</h2>
+            </div> @if(session('success'))
+                <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl flex items-center gap-3 animate-fade-in">
+                <span class="font-medium">{{ session('success') }}</span>
             </div>
+        @endif
         </div></div><p class="text-slate-500 text-sm mt-1">Kelola data, edit harga stok, atau hapus item kosmetik di toko.</p>         
         <div class="bg-white rounded-3xl overflow-hidden border border-rose-100 shadow-xl shadow-rose-100/50">
             <div class="overflow-x-auto">
@@ -38,6 +42,7 @@
                             <th class="p-4 border-b border-rose-100">Gambar</th>
                             <th class="p-4 border-b border-rose-100">Nama Produk</th>
                             <th class="p-4 border-b border-rose-100">Kategori</th>
+                            <th class="p-4 border-b border-rose-100">Deskripsi</th>
                             <th class="p-4 border-b border-rose-100">Harga</th>
                             <th class="p-4 border-b border-rose-100 text-center w-32">Aksi</th>
                         </tr>
@@ -55,6 +60,7 @@
                                     {{ $item->kategori }}
                                 </span>
                             </td>
+                            <td class="p-4 text-slate-600 max-w-xs truncate">{{ $item->deskripsi_produk ?? $item->deskripsi ?? '-' }}</td>
                             <td class="p-4 font-bold text-rose-600">Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}</td>
                             <td class="p-4 text-center">
                                 <div class="flex justify-center items-center gap-3">
