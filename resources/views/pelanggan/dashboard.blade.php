@@ -16,15 +16,20 @@
     <div class="bg-white border-b border-rose-100 p-4 shadow-sm sticky top-0 z-50">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-bold text-rose-600">Glow Beauty</h1>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
                 <span class="text-sm text-gray-600">Halo, Pelanggan ✨</span>
+                
                 <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-1.5 rounded-full text-xs font-semibold transition">
-                        Logout
-                    </button>
-                </form>
-            </div>
+        @csrf
+        <button type="submit" class="bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white px-4 py-1.5 rounded-full text-xs font-semibold transition">
+            Logout
+        </button>
+    </form>
+    <a href="{{ route('keranjang.index') }}" 
+    class="text-rose-600 hover:text-rose-800 transition-all duration-300 p-2">
+    <i class="fa-solid fa-cart-shopping text-xl"></i>
+</a>
+</div>
         </div>
     </div>
 
@@ -101,13 +106,12 @@
                                     Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}
                                 </p>
                             @endif
-                            <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST" class="relative z-20">
-
-                        @csrf
-                        <button type="submit" class="w-full mt-3 bg-rose-600 hover:bg-rose-700 text-white text-xs font-medium py-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer">
-                            <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
-                        </button>
-                    </form>
+                            <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="bg-rose-600 text-white px-4 py-2 rounded-lg w-full hover:bg-rose-700 transition">                            
+                                    <i class="fa-solid fa-cart-shopping"></i> Beli Sekarang
+                                </button>
+                            </form>
                         </div>
                     </div>
                 @endforeach

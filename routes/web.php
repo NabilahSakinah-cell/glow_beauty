@@ -57,6 +57,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/keranjang', [ProdukController::class, 'keranjang'])->name('keranjang.index');
     Route::post('/keranjang/tambah/{id}', [ProdukController::class, 'tambahKeranjang'])->name('keranjang.tambah');
     Route::post('/keranjang/checkout', [ProdukController::class, 'checkout'])->name('keranjang.checkout');
+    Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update'); 
+    Route::get('/keranjang/checkout-form', [ProdukController::class, 'checkoutForm'])->name('keranjang.checkout.form');
 
 });
 
@@ -81,10 +83,7 @@ Route::post('/login-admin', [AdminController::class, 'login']);
 
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-Route::get('/admin/pesanan', function () {
-    $pesanan = [];
-    return view('admin.pesanan', compact('pesanan'));
-})->name('admin.pesanan');
+Route::get('/admin/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
 
 // Kelola Produk & Stok
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
@@ -94,3 +93,5 @@ Route::post('/admin/produk/simpan', [ProdukController::class, 'store'])->name('a
 Route::get('/admin/produk/edit/{id}', [ProdukController::class, 'edit']); 
 Route::post('/admin/produk/update/{id}', [ProdukController::class, 'update_produk']);
 Route::get('/admin/produk/hapus/{id}', [ProdukController::class, 'hapus_produk']);
+
+Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update');
