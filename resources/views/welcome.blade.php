@@ -10,7 +10,6 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
-        /* Animasi pop-up */
         .modal-masuk { animation: muncul 0.3s ease-out forwards; }
         @keyframes muncul {
             from { opacity: 0; transform: scale(0.95); }
@@ -23,36 +22,41 @@
     <!-- 1. NAVBAR -->
     <nav class="bg-white sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
-            <!-- Logo -->
             <a href="{{ route('home') }}" class="text-2xl font-serif font-bold text-rose-500">
                 Glow <span class="text-rose-400">Beauty</span>
             </a>
             
-            <!-- Menu Tengah (Menu Produk Dihapus) -->
             <div class="hidden md:flex gap-8 text-sm font-semibold text-gray-600">
                 <a href="{{ route('home') }}" class="text-rose-500">Home</a>
                 <a href="#tentang" class="hover:text-rose-500 transition">Tentang Kami</a>
                 <a href="#kontak" class="hover:text-rose-500 transition">Kontak</a>
             </div>
 
-            <!-- Ikon Kanan (Keranjang Dihapus, Desain Pencarian & Login Diperbarui) -->
-            <div class="flex gap-2 sm:gap-4 items-center">
-                
-                <!-- Ikon Cari -->
-                <a href="{{ route('katalog') }}" class="text-gray-600 hover:text-rose-500 transition w-10 h-10 flex items-center justify-center rounded-full hover:bg-rose-50" title="Cari Produk">
-                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
-                </a>
-                
-                <!-- Tombol Login (Diubah jadi tombol kapsul agar lebih jelas) -->
-                <a href="{{ route('login') }}" class="flex items-center gap-2 bg-rose-100 text-rose-600 border border-rose-200 px-5 py-2 rounded-full font-bold hover:bg-rose-500 hover:text-white transition shadow-sm text-sm">
-                    <i class="fa-regular fa-user"></i> Masuk
-                </a>
-
+            <!-- DROPDOWN LOGIN -->
+            <div class="flex items-center">
+                <div class="relative group">
+                    <button class="flex items-center gap-2 bg-rose-100 text-rose-600 px-5 py-2 rounded-full font-bold hover:bg-rose-500 hover:text-white transition shadow-sm text-sm">
+                        <i class="fa-regular fa-user"></i> Masuk
+                    </button>
+                    
+                    <div class="absolute right-0 top-full pt-2 w-44 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                        <div class="bg-white rounded-xl shadow-xl border border-rose-100 overflow-hidden flex flex-col">
+                            <a href="{{ route('login') }}" class="px-4 py-3 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 border-b border-gray-50 flex items-center gap-3 transition">
+                                <i class="fa-solid fa-bag-shopping text-rose-400 w-4 text-center"></i> Pelanggan
+                            </a>
+                            <a href="{{ url('/login-admin') }}" class="px-4 py-3 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 border-b border-gray-50 flex items-center gap-3 transition">
+                                <i class="fa-solid fa-laptop-code text-rose-400 w-4 text-center"></i> Admin
+                            </a>
+                            <a href="{{ url('/login-owner') }}" class="px-4 py-3 text-sm text-gray-700 hover:bg-rose-50 hover:text-rose-600 flex items-center gap-3 transition">
+                                <i class="fa-solid fa-crown text-rose-400 w-4 text-center"></i> Owner
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
 
-    <!-- NOTIFIKASI SUKSES -->
     @if(session('success'))
     <div class="max-w-7xl mx-auto mt-6 px-4 md:px-8">
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-xl relative flex items-center gap-3 shadow-sm">
@@ -73,10 +77,11 @@
                 Temukan skincare & makeup terbaik untuk tampil percaya diri setiap hari.
             </p>
             <div class="flex gap-4 pt-4">
-                <a href="{{ route('katalog') }}" class="bg-rose-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-rose-200 hover:bg-rose-600 transition flex items-center gap-2">
+                <!-- Jika sudah login ke katalog, jika belum ke halaman login -->
+                <a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="bg-rose-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-rose-200 hover:bg-rose-600 transition flex items-center gap-2">
                     <i class="fa-solid fa-bag-shopping"></i> Belanja Sekarang
                 </a>
-                <a href="{{ route('katalog') }}" class="bg-white text-gray-700 border border-gray-200 px-6 py-3 rounded-xl font-semibold hover:border-rose-300 hover:text-rose-500 transition">
+                <a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="bg-white text-gray-700 border border-gray-200 px-6 py-3 rounded-xl font-semibold hover:border-rose-300 hover:text-rose-500 transition">
                     Lihat Produk
                 </a>
             </div>
@@ -92,42 +97,53 @@
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-16 bg-white rounded-t-[3rem] shadow-sm border-t border-rose-50">
         <div class="flex justify-between items-end mb-8">
             <h2 class="text-2xl font-bold text-gray-900">Produk Terlaris</h2>
-            <a href="{{ route('katalog') }}" class="text-sm text-rose-500 font-semibold hover:underline">Lihat Semua ></a>
+            <a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="text-sm text-rose-500 font-semibold hover:underline">Lihat Semua ></a>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @forelse($produk as $item)
-            <div class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 flex flex-col h-full overflow-hidden group">
-                <a href="{{ route('produk.detail', $item->id ?? $item->id_produk) }}" class="relative aspect-square bg-[#F8F9FA] block overflow-hidden">
-                    <img src="{{ asset('uploads/produk/' . ($item->gambar ?? 'default.png')) }}" alt="{{ $item->nama_produk ?? $item->nama }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                    <div class="absolute top-3 left-3 bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-sm">
-                        30% OFF
-                    </div>
+            <div class="bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-rose-100 flex flex-col h-full p-4 group">
+                
+                <a href="{{ auth()->check() ? route('produk.detail', $item->id ?? $item->id_produk) : route('login') }}" class="relative aspect-square block overflow-hidden rounded-xl mb-4 bg-gray-50 flex items-center justify-center">
+                    <img src="{{ asset('uploads/produk/' . ($item->gambar ?? 'default.png')) }}" alt="{{ $item->nama_produk ?? $item->nama }}" class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500">
                 </a>
-                <div class="p-4 flex flex-col flex-grow">
+
+                <div class="flex flex-col flex-grow">
                     <div class="flex justify-between items-center mb-3">
-                        <span class="bg-rose-100 text-rose-600 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wide">
+                        <span class="bg-rose-50 text-rose-500 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wide">
                             {{ $item->kategori ?? 'SKINCARE' }}
                         </span>
                         <div class="flex items-center gap-1 text-yellow-400 text-xs font-bold">
                             <i class="fa-solid fa-star"></i> 5.0
                         </div>
                     </div>
-                    <a href="{{ route('produk.detail', $item->id ?? $item->id_produk) }}" class="flex-grow">
-                        <h3 class="text-gray-800 font-bold text-sm md:text-base line-clamp-2 leading-snug mb-2">
+                    
+                    <a href="{{ auth()->check() ? route('produk.detail', $item->id ?? $item->id_produk) : route('login') }}" class="flex-grow">
+                        <h3 class="text-gray-800 font-bold text-sm md:text-base line-clamp-2 leading-snug mb-3">
                             {{ $item->nama_produk ?? $item->nama }}
                         </h3>
                     </a>
+                    
                     <div class="mt-auto mb-4">
-                        <p class="text-xs text-gray-400 line-through mb-0.5">Rp {{ number_format(($item->harga ?? 0) + 15000, 0, ',', '.') }}</p>
+                        <p class="text-[11px] text-gray-400 line-through mb-0.5">Rp {{ number_format(($item->harga ?? 0) + 15000, 0, ',', '.') }}</p>
                         <p class="text-lg font-bold text-rose-600">Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}</p>
                     </div>
-                    <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST" class="w-full">
-                        @csrf
-                        <button type="submit" class="w-full bg-rose-600 text-white py-2.5 rounded-xl font-bold hover:bg-rose-700 transition shadow-sm flex justify-center items-center gap-2">
+                    
+                    <!-- LOGIKA TOMBOL BELI -->
+                    @auth
+                        <!-- Jika SUDAH Login: Eksekusi aksi keranjang -->
+                        <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST" class="w-full">
+                            @csrf
+                            <button type="submit" class="w-full bg-[#E11D48] text-white py-2 rounded-xl font-bold hover:bg-rose-700 transition flex justify-center items-center gap-2 shadow-sm text-sm">
+                                <i class="fa-solid fa-cart-plus"></i> Beli Sekarang
+                            </button>
+                        </form>
+                    @else
+                        <!-- Jika BELUM Login: Arahkan ke Halaman Login -->
+                        <a href="{{ route('login') }}" class="w-full bg-[#E11D48] text-white py-2 rounded-xl font-bold hover:bg-rose-700 transition flex justify-center items-center gap-2 shadow-sm text-sm text-center">
                             <i class="fa-solid fa-cart-plus"></i> Beli Sekarang
-                        </button>
-                    </form>
+                        </a>
+                    @endauth
                 </div>
             </div>
             @empty
@@ -143,7 +159,7 @@
             <div class="relative z-10 text-center md:text-left mb-6 md:mb-0">
                 <h2 class="text-3xl font-bold text-gray-900 mb-2">Promo Spesial Bulan Ini</h2>
                 <p class="text-gray-600 mb-6 max-w-sm">Diskon hingga <span class="font-bold text-rose-500">30%</span> untuk produk pilihan Glow Beauty.</p>
-                <a href="{{ route('katalog') }}" class="bg-rose-500 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-rose-600 transition inline-block">
+                <a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="bg-rose-500 text-white px-8 py-3 rounded-full font-bold shadow-md hover:bg-rose-600 transition inline-block">
                     Belanja Sekarang
                 </a>
             </div>
@@ -181,7 +197,7 @@
                 <h4 class="font-bold text-gray-900 mb-4 text-base">Menu</h4>
                 <ul class="space-y-3">
                     <li><a href="{{ route('home') }}" class="hover:text-rose-500 transition">Home</a></li>
-                    <li><a href="{{ route('katalog') }}" class="hover:text-rose-500 transition">Katalog</a></li>
+                    <li><a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="hover:text-rose-500 transition">Katalog</a></li>
                     <li><a href="#tentang" class="hover:text-rose-500 transition">Tentang Kami</a></li>
                     <li><a href="#kontak" class="hover:text-rose-500 transition">Kontak</a></li>
                 </ul>
@@ -202,7 +218,7 @@
                 <ul class="space-y-4">
                     <li class="flex items-start gap-3">
                         <i class="fa-solid fa-phone text-rose-400 mt-1"></i>
-                        <span>0858-2403-4604</span>
+                        <span>0812-3456-7890</span>
                     </li>
                     <li class="flex items-start gap-3">
                         <i class="fa-regular fa-envelope text-rose-400 mt-1"></i>
@@ -226,11 +242,7 @@
         </div>
     </footer>
 
-
-    <!-- ========================================== -->
-    <!-- 🛒 KUMPULAN MODAL POP-UP INFORMASI (HIDDEN) -->
-    <!-- ========================================== -->
-
+    <!-- KUMPULAN MODAL POP-UP INFORMASI -->
     <!-- Modal 1: Cara Belanja -->
     <div id="modal-cara-belanja" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 modal-masuk shadow-2xl relative">
@@ -288,7 +300,6 @@
         </div>
     </div>
 
-    <!-- Script JavaScript Singkat untuk Buka/Tutup Modal -->
     <script>
         function bukaModal(idModal) {
             document.getElementById(idModal).classList.remove('hidden');

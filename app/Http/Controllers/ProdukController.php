@@ -212,7 +212,7 @@ class ProdukController extends Controller
 
 
     // ==========================================
-    // 🛒 FITUR KERANJANG BELANJA (SESSION)
+    // 🛒 FITUR KERANJANG BELANJA (SESSION & DATABASE)
     // ==========================================
 
     public function keranjang()
@@ -302,6 +302,7 @@ public function checkout(Request $request)
         'no_telepon'      => $request->no_telepon ?? '-',
         'status'          => 'Pending'
     ]);
+    
     // 4. Simpan ke tabel 'detail_pesanan' (Daftar produknya)
     foreach ($keranjang as $item) {
         DB::table('detail_pesanan')->insert([
@@ -317,11 +318,18 @@ public function checkout(Request $request)
             ->decrement('stok', $item->jumlah);
     }
 
-    
     // 5. Hapus keranjang
     DB::table('detail_keranjang')->where('id_keranjang', 1)->delete();
 
-    return redirect()->route('pelanggan.dashboard')->with('success', 'Checkout berhasil!');
+    // =========================================================
+    // ✨ FITUR BARU: ESTIMASI PENGIRIMAN (DITAMBAHKAN DI SINI)
+    // =========================================================
+    $estimasiAwal = now()->addDays(2)->format('d M Y');
+    $estimasiAkhir = now()->addDays(4)->format('d M Y');
+    
+    $pesanSukses = "Checkout berhasil! Pesanan sedang diproses. 🚚 Estimasi paket tiba: $estimasiAwal s/d $estimasiAkhir.";
+
+    return redirect()->route('pelanggan.dashboard')->with('success', $pesanSukses);
 }
 
 public function checkoutForm()
