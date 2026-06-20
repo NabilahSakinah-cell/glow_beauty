@@ -13,11 +13,12 @@ use App\Http\Controllers\ProdukController;
 
 // 1. Landing Page (Tampilan awal web saat pertama kali dibuka)
 Route::get('/', function () {
-    // Ambil 4 produk dari database untuk bagian "Produk Terlaris"
+    // ✨ UBAH DI SINI: take(8) untuk menampilkan 8 produk (2 baris). 
+    // Jika kamu ingin menampilkan SEMUA produk di halaman awal, hapus saja "->take(8)" sehingga menjadi "->get()"
     try {
-        $produk = DB::table('produk')->take(4)->get();
+        $produk = DB::table('produk')->take(8)->get();
     } catch (\Throwable $e) {
-        $produk = DB::table('products')->take(4)->get();
+        $produk = DB::table('products')->take(8)->get();
     }
     
     return view('welcome', compact('produk')); 
@@ -57,8 +58,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/keranjang', [ProdukController::class, 'keranjang'])->name('keranjang.index');
     Route::post('/keranjang/tambah/{id}', [ProdukController::class, 'tambahKeranjang'])->name('keranjang.tambah');
     Route::post('/keranjang/checkout', [ProdukController::class, 'checkout'])->name('keranjang.checkout');
-    Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update'); 
-    Route::get('/keranjang/checkout-form', [ProdukController::class, 'checkoutForm'])->name('keranjang.checkout.form');
 
 });
 
@@ -83,7 +82,10 @@ Route::post('/login-admin', [AdminController::class, 'login']);
 
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-Route::get('/admin/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
+Route::get('/admin/pesanan', function () {
+    $pesanan = [];
+    return view('admin.pesanan', compact('pesanan'));
+})->name('admin.pesanan');
 
 // Kelola Produk & Stok
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
@@ -93,5 +95,3 @@ Route::post('/admin/produk/simpan', [ProdukController::class, 'store'])->name('a
 Route::get('/admin/produk/edit/{id}', [ProdukController::class, 'edit']); 
 Route::post('/admin/produk/update/{id}', [ProdukController::class, 'update_produk']);
 Route::get('/admin/produk/hapus/{id}', [ProdukController::class, 'hapus_produk']);
-
-Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update');
