@@ -13,8 +13,6 @@ use App\Http\Controllers\ProdukController;
 
 // 1. Landing Page (Tampilan awal web saat pertama kali dibuka)
 Route::get('/', function () {
-    // ✨ UBAH DI SINI: take(8) untuk menampilkan 8 produk (2 baris). 
-    // Jika kamu ingin menampilkan SEMUA produk di halaman awal, hapus saja "->take(8)" sehingga menjadi "->get()"
     try {
         $produk = DB::table('produk')->take(8)->get();
     } catch (\Throwable $e) {
@@ -54,9 +52,15 @@ Route::middleware(['auth'])->group(function () {
     // Dashboard Pelanggan
     Route::get('/pelanggan/dashboard', [ProdukController::class, 'indexpelanggan'])->name('pelanggan.dashboard');
 
-    // Fitur Keranjang Belanja & Checkout (Aman terlindungi)
+    // Fitur Keranjang Belanja & Checkout
     Route::get('/keranjang', [ProdukController::class, 'keranjang'])->name('keranjang.index');
     Route::post('/keranjang/tambah/{id}', [ProdukController::class, 'tambahKeranjang'])->name('keranjang.tambah');
+    Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update');
+    
+    // ✨ INI TAMBAHANNYA: Route untuk membuka halaman Form Checkout (GET)
+    Route::get('/keranjang/checkout', [ProdukController::class, 'checkoutForm'])->name('keranjang.checkout.form');
+    
+    // Route untuk memproses data Checkout (POST)
     Route::post('/keranjang/checkout', [ProdukController::class, 'checkout'])->name('keranjang.checkout');
 
 });

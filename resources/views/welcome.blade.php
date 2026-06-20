@@ -10,6 +10,7 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         .font-serif { font-family: 'Playfair Display', serif; }
+        /* Animasi pop-up */
         .modal-masuk { animation: muncul 0.3s ease-out forwards; }
         @keyframes muncul {
             from { opacity: 0; transform: scale(0.95); }
@@ -19,20 +20,17 @@
 </head>
 <body class="bg-[#FFF5F7] text-gray-800">
 
-    <!-- 1. NAVBAR -->
     <nav class="bg-white sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 md:px-8 py-4 flex justify-between items-center">
+            
             <a href="{{ route('home') }}" class="text-2xl font-serif font-bold text-rose-500">
                 Glow <span class="text-rose-400">Beauty</span>
             </a>
             
             <div class="hidden md:flex gap-8 text-sm font-semibold text-gray-600">
                 <a href="{{ route('home') }}" class="text-rose-500">Home</a>
-                <a href="#tentang" class="hover:text-rose-500 transition">Tentang Kami</a>
-                <a href="#kontak" class="hover:text-rose-500 transition">Kontak</a>
             </div>
 
-            <!-- DROPDOWN LOGIN -->
             <div class="flex items-center">
                 <div class="relative group">
                     <button class="flex items-center gap-2 bg-rose-100 text-rose-600 px-5 py-2 rounded-full font-bold hover:bg-rose-500 hover:text-white transition shadow-sm text-sm">
@@ -66,7 +64,6 @@
     </div>
     @endif
 
-    <!-- 2. HERO SECTION -->
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-10 md:py-20 flex flex-col md:flex-row items-center gap-10">
         <div class="w-full md:w-1/2 space-y-6">
             <h1 class="text-5xl md:text-6xl font-serif font-bold text-gray-900 leading-tight">
@@ -77,7 +74,6 @@
                 Temukan skincare & makeup terbaik untuk tampil percaya diri setiap hari.
             </p>
             <div class="flex gap-4 pt-4">
-                <!-- Jika sudah login ke katalog, jika belum ke halaman login -->
                 <a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="bg-rose-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-rose-200 hover:bg-rose-600 transition flex items-center gap-2">
                     <i class="fa-solid fa-bag-shopping"></i> Belanja Sekarang
                 </a>
@@ -93,7 +89,6 @@
         </div>
     </div>
 
-    <!-- 3. PRODUK TERLARIS -->
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-16 bg-white rounded-t-[3rem] shadow-sm border-t border-rose-50">
         <div class="flex justify-between items-end mb-8">
             <h2 class="text-2xl font-bold text-gray-900">Produk Terlaris</h2>
@@ -129,9 +124,7 @@
                         <p class="text-lg font-bold text-rose-600">Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}</p>
                     </div>
                     
-                    <!-- LOGIKA TOMBOL BELI -->
                     @auth
-                        <!-- Jika SUDAH Login: Eksekusi aksi keranjang -->
                         <form action="{{ route('keranjang.tambah', $item->id ?? $item->id_produk) }}" method="POST" class="w-full">
                             @csrf
                             <button type="submit" class="w-full bg-[#E11D48] text-white py-2 rounded-xl font-bold hover:bg-rose-700 transition flex justify-center items-center gap-2 shadow-sm text-sm">
@@ -139,7 +132,6 @@
                             </button>
                         </form>
                     @else
-                        <!-- Jika BELUM Login: Arahkan ke Halaman Login -->
                         <a href="{{ route('login') }}" class="w-full bg-[#E11D48] text-white py-2 rounded-xl font-bold hover:bg-rose-700 transition flex justify-center items-center gap-2 shadow-sm text-sm text-center">
                             <i class="fa-solid fa-cart-plus"></i> Beli Sekarang
                         </a>
@@ -152,7 +144,6 @@
         </div>
     </div>
 
-    <!-- 4. PROMO BANNER -->
     <div class="max-w-7xl mx-auto px-4 md:px-8 py-10 bg-white">
         <div class="bg-gradient-to-r from-rose-100 to-pink-50 rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between border border-rose-200 shadow-sm relative overflow-hidden">
             <div class="absolute -right-20 -top-20 w-64 h-64 bg-rose-200 rounded-full blur-3xl opacity-50"></div>
@@ -170,7 +161,6 @@
         </div>
     </div>
 
-    <!-- 5. TENTANG KAMI -->
     <div id="tentang" class="bg-white py-16 border-t border-rose-50">
         <div class="max-w-5xl mx-auto px-4 text-center">
             <h2 class="text-3xl font-serif font-bold text-rose-500 mb-6">Cerita Glow Beauty ✨</h2>
@@ -182,7 +172,6 @@
         </div>
     </div>
 
-    <!-- 6. FOOTER & KONTAK -->
     <footer id="kontak" class="bg-[#FFF5F7] border-t border-rose-100 pt-16 pb-8">
         <div class="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12 text-sm text-gray-600">
             
@@ -198,8 +187,6 @@
                 <ul class="space-y-3">
                     <li><a href="{{ route('home') }}" class="hover:text-rose-500 transition">Home</a></li>
                     <li><a href="{{ auth()->check() ? route('katalog') : route('login') }}" class="hover:text-rose-500 transition">Katalog</a></li>
-                    <li><a href="#tentang" class="hover:text-rose-500 transition">Tentang Kami</a></li>
-                    <li><a href="#kontak" class="hover:text-rose-500 transition">Kontak</a></li>
                 </ul>
             </div>
 
@@ -242,8 +229,6 @@
         </div>
     </footer>
 
-    <!-- KUMPULAN MODAL POP-UP INFORMASI -->
-    <!-- Modal 1: Cara Belanja -->
     <div id="modal-cara-belanja" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 modal-masuk shadow-2xl relative">
             <button onclick="tutupModal('modal-cara-belanja')" class="absolute top-4 right-4 text-gray-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -257,7 +242,6 @@
         </div>
     </div>
 
-    <!-- Modal 2: Kebijakan Privasi -->
     <div id="modal-privasi" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 modal-masuk shadow-2xl relative">
             <button onclick="tutupModal('modal-privasi')" class="absolute top-4 right-4 text-gray-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -271,7 +255,6 @@
         </div>
     </div>
 
-    <!-- Modal 3: Syarat & Ketentuan -->
     <div id="modal-syarat" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 modal-masuk shadow-2xl relative">
             <button onclick="tutupModal('modal-syarat')" class="absolute top-4 right-4 text-gray-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -284,7 +267,6 @@
         </div>
     </div>
 
-    <!-- Modal 4: Pengembalian -->
     <div id="modal-pengembalian" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
         <div class="bg-white rounded-3xl w-full max-w-lg p-6 md:p-8 modal-masuk shadow-2xl relative">
             <button onclick="tutupModal('modal-pengembalian')" class="absolute top-4 right-4 text-gray-400 hover:text-rose-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
