@@ -65,6 +65,10 @@
                         <label class="block text-slate-700 font-medium mb-2">Harga (Rp)</label>
                         <input type="number" name="harga" value="{{ $produk->harga ?? 0 }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 150000">
                     </div>
+                <div>
+                        <label class="block text-slate-700 font-medium mb-2">Diskon (%)</label>
+                        <input type="number" name="diskon" required value="{{ $produk->diskon }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 ...">
+                </div>
                     <div>
                         <label class="block text-slate-700 font-medium mb-2">Stok</label>
                         <input type="number" name="stok" value="{{ $produk->stok ?? 0 }}" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 50">

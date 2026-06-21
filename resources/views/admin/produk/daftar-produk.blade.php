@@ -44,6 +44,7 @@
                             <th class="p-4 border-b border-rose-100">Kategori</th>
                             <th class="p-4 border-b border-rose-100">Deskripsi</th>
                             <th class="p-4 border-b border-rose-100">Harga</th>
+                            <th class="p-4 border-b border-rose-100 text-center">Diskon</th> 
                             <th class="p-4 border-b border-rose-100 text-center w-32">Aksi</th>
                         </tr>
                     </thead>
@@ -62,6 +63,16 @@
                             </td>
                             <td class="p-4 text-slate-600 max-w-xs truncate">{{ $item->deskripsi_produk ?? $item->deskripsi ?? '-' }}</td>
                             <td class="p-4 font-bold text-rose-600">Rp {{ number_format($item->harga ?? 0, 0, ',', '.') }}</td>
+                            <td class="p-4 text-center">
+                                @if(isset($item->diskon) && $item->diskon > 0)
+                                    <span class="bg-rose-100 text-rose-600 px-3 py-1 rounded-full text-xs font-bold border border-rose-200">
+                                        {{ $item->diskon }}%
+                                    </span>
+                                @else
+                                    <span class="text-slate-400 text-xs">-</span>
+                                @endif
+                            </td>
+                    
                             <td class="p-4 text-center">
                                 <div class="flex justify-center items-center gap-3">
                                     <a href="{{ url('/admin/produk/edit/' . ($item->id_produk ?? $item->id)) }}" class="bg-amber-50 hover:bg-amber-500 text-amber-600 hover:text-white px-3 py-1.5 rounded-lg border border-amber-200 transition-all duration-200 font-medium text-xs shadow-sm">

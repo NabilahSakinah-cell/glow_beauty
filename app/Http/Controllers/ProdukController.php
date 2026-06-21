@@ -72,6 +72,7 @@ class ProdukController extends Controller
         if (in_array('kategori', $kolomTersedia)) $dataSimpan['kategori'] = $kategori_final;
         if (in_array('harga', $kolomTersedia)) $dataSimpan['harga'] = $harga_final;
         if (in_array('stok', $kolomTersedia)) $dataSimpan['stok'] = $stok_final;
+        if (in_array('diskon', $kolomTersedia)) $dataSimpan['diskon'] = $request->diskon ?? 0;
         if (in_array('deskripsi', $kolomTersedia)) $dataSimpan['deskripsi'] = $deskripsi_final;
         if (in_array('deskripsi_produk', $kolomTersedia)) $dataSimpan['deskripsi_produk'] = $deskripsi_final;
         if (in_array('foto', $kolomTersedia)) $dataSimpan['foto'] = $namaFoto;
@@ -125,6 +126,7 @@ class ProdukController extends Controller
             'nama_produk'      => $request->nama_produk,
             'kategori'         => $request->kategori,
             'harga'            => $request->harga,
+            'diskon'           => $request->diskon,
             'stok'             => $request->stok,
             'deskripsi_produk' => $request->deskripsi_produk,
         ];

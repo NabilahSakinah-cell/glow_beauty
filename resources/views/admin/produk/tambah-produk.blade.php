@@ -38,11 +38,15 @@
                     <input type="text" name="nama_produk" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: Serum Anti Aging Gold">
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div>
                         <label class="block text-slate-700 font-medium mb-2">Harga (Rp) <span class="text-red-500">*</span></label>
                         <input type="number" name="harga" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 150000">
                     </div>
+                <div>
+                    <label class="block text-slate-700 font-medium mb-2">Diskon (%)</label>
+                    <input type="number" name="diskon" required value="0" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200">
+                </div>
                     <div>
                         <label class="block text-slate-700 font-medium mb-2">Stok Awal <span class="text-red-500">*</span></label>
                         <input type="number" name="stok" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-800 focus:bg-white focus:ring-2 focus:ring-rose-500 focus:border-rose-500 outline-none transition duration-200" placeholder="Contoh: 50">
