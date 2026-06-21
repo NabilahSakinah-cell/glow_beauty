@@ -147,15 +147,21 @@ class AdminController extends Controller
     return view('admin.pesanan', compact('pesanan', 'stats'));
 }
 
-public function detail_pesanan($id) {
-    if (!session('admin_logged_in')) return redirect('/login-admin');
-
-    // Mengambil data pesanan spesifik berdasarkan ID
+public function detail_pesanan($id)
+{
+    // Ambil data pesanan
     $pesanan = DB::table('pesanan')->where('id_pesanan', $id)->first();
     
-    if (!$pesanan) return redirect()->back()->with('error', 'Pesanan tidak ditemukan.');
+    // Ambil detail items
+    $items = DB::table('detail_pesanan')
+                ->where('id_pesanan', $id)
+                ->get();
 
-    return view('admin.detail_pesanan', compact('pesanan'));
+    if (!$pesanan) {
+        return redirect()->back()->with('error', 'Pesanan tidak ditemukan.');
+    }
+
+    return view('admin.detail_pesanan', compact('pesanan', 'items'));
 }
 
 public function edit_pesanan($id)
