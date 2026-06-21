@@ -132,7 +132,7 @@ class ProdukController extends Controller
         if ($request->hasFile('gambar')) {
             if ($produk->gambar && file_exists(public_path('uploads/produk/' . $produk->gambar))) {
                 unlink(public_path('uploads/produk/' . $produk->gambar));
-        }
+            }
 
             $file = $request->file('gambar');
             $namaFile = time() . '.' . $file->getClientOriginalExtension();
@@ -140,7 +140,7 @@ class ProdukController extends Controller
             $data['gambar'] = $namaFile;
         }
 
-         DB::table('produk')->where('id_produk', $id)->update($data);
+        DB::table('produk')->where('id_produk', $id)->update($data);
             
         return redirect('/admin/produk/daftar')->with('success', 'Data produk berhasil diperbarui!');
     }
@@ -178,14 +178,14 @@ class ProdukController extends Controller
     {    
         $query = DB::table('produk');
         
-        
         if ($request->has('search') && $request->search != '') {
             $searchTerm = '%' . $request->search . '%';
             $query->where(function($q) use ($searchTerm) {
                 $q->where('nama_produk', 'like', $searchTerm)
                 ->orWhere('deskripsi_produk', 'like', $searchTerm); 
-    });
-}
+            });
+        }
+
         if ($request->has('kategori') && $request->kategori != '') {
             $query->where('kategori', $request->kategori);
         }
@@ -216,126 +216,130 @@ class ProdukController extends Controller
     // ==========================================
 
     public function keranjang()
-{
-    $keranjang = DB::table('detail_keranjang')
-        ->join('produk', 'detail_keranjang.id_produk', '=', 'produk.id_produk')
-        ->where('detail_keranjang.id_keranjang', 1)
-        ->select('detail_keranjang.*', 'produk.gambar', 'produk.gambar') 
-        ->get();
-        
+    {
+        $keranjang = DB::table('detail_keranjang')
+            ->join('produk', 'detail_keranjang.id_produk', '=', 'produk.id_produk')
+            ->where('detail_keranjang.id_keranjang', 1)
+            ->select('detail_keranjang.*', 'produk.gambar', 'produk.gambar') 
+            ->get();
+            
         return view('pelanggan.keranjang', compact('keranjang'));
-}
+    }
     
 
     public function tambahKeranjang($id)
-{
-    // 1. Ambil data produk
-    $produk = DB::table('produk')->where('id_produk', $id)->first();
-    if (!$produk) return back()->with('error', 'Produk tidak ditemukan!');
+    {
+        // 1. Ambil data produk
+        $produk = DB::table('produk')->where('id_produk', $id)->first();
+        if (!$produk) return back()->with('error', 'Produk tidak ditemukan!');
 
-     // 2. Hitung harga setelah diskon (kalau ada diskon)
-    $hargaFinal = $produk->harga;
-    if (isset($produk->diskon) && $produk->diskon > 0) {
-        $hargaFinal = $produk->harga - ($produk->harga * ($produk->diskon / 100));
-    }
-
-    // 3. Cek apakah sudah ada di keranjang
-    $ada = DB::table('detail_keranjang')
-                ->where('id_keranjang', 1)
-                ->where('id_produk', $id)
-                ->first();
-
-    if ($ada) {
-        // Jika sudah ada, tambah jumlahnya
-        DB::table('detail_keranjang')
-            ->where('id_detail_keranjang', $ada->id_detail_keranjang)
-            ->update(['jumlah' => $ada->jumlah + 1]);
-    } else {
-        // Jika belum ada, masukkan baru
-        DB::table('detail_keranjang')->insert([
-            'id_keranjang' => 1,
-            'id_produk'    => $produk->id_produk,
-            'nama_produk'  => $produk->nama_produk,
-            'harga'        => $hargaFinal,
-            'jumlah'       => 1
-        ]);
-    }
-    // 3. Arahkan ke halaman keranjang
-    return redirect('/keranjang')->with('success', 'Produk masuk keranjang! ✨');
-}
-
-
-public function updateJumlah(Request $request, $id)
-{
-    $aksi = $request->aksi; // 'tambah' atau 'kurang'
-    $item = DB::table('detail_keranjang')->where('id_detail_keranjang', $id)->first();
-
-    if ($item) {
-        $jumlahBaru = ($aksi == 'tambah') ? $item->jumlah + 1 : $item->jumlah - 1;
-
-        if ($jumlahBaru <= 0) {
-            DB::table('detail_keranjang')->where('id_detail_keranjang', $id)->delete();
-        } else {
-            DB::table('detail_keranjang')->where('id_detail_keranjang', $id)->update(['jumlah' => $jumlahBaru]);
+        // 2. Hitung harga setelah diskon (kalau ada diskon)
+        $hargaFinal = $produk->harga;
+        if (isset($produk->diskon) && $produk->diskon > 0) {
+            $hargaFinal = $produk->harga - ($produk->harga * ($produk->diskon / 100));
         }
-    }
-    return back();
-}
 
-public function checkout(Request $request)
-{
-    // 1. Ambil data keranjang
-    $keranjang = DB::table('detail_keranjang')->where('id_keranjang', 1)->get();
-    
-    if ($keranjang->isEmpty()) {
-        return back()->with('error', 'Keranjang kosong!');
-    }
-    // 2. Hitung total harga
-    $total = $keranjang->sum(fn($item) => $item->harga * $item->jumlah);
+        // 3. Cek apakah sudah ada di keranjang
+        $ada = DB::table('detail_keranjang')
+                    ->where('id_keranjang', 1)
+                    ->where('id_produk', $id)
+                    ->first();
 
-    // 3. Simpan ke tabel 'pesanan'
-    $idPesanan = DB::table('pesanan')->insertGetId([
-        'id_pelanggan'    => auth()->id(),
-        'tanggal_pesanan' => now()->timestamp, // Atau gunakan format date('Y-m-d')
-        'total_harga'     => $total,
-        'alamat'          => $request->alamat ?? 'Belum diisi', 
-        'no_telepon'      => $request->no_telepon ?? '-',
-        'status'          => 'Pending'
-    ]);
-    
-    // 4. Simpan ke tabel 'detail_pesanan' (Daftar produknya)
-    foreach ($keranjang as $item) {
-        DB::table('detail_pesanan')->insert([
-            'id_pesanan' => $idPesanan, // Mengambil ID dari tabel pesanan di atas
-            'id_produk'  => $item->id_produk,
-            'jumlah'     => $item->jumlah,
-            'subtotal'   => $item->harga * $item->jumlah
+        if ($ada) {
+            // Jika sudah ada, tambah jumlahnya
+            DB::table('detail_keranjang')
+                ->where('id_detail_keranjang', $ada->id_detail_keranjang)
+                ->update(['jumlah' => $ada->jumlah + 1]);
+        } else {
+            // Jika belum ada, masukkan baru
+            DB::table('detail_keranjang')->insert([
+                'id_keranjang' => 1,
+                'id_produk'    => $produk->id_produk,
+                'nama_produk'  => $produk->nama_produk,
+                'harga'        => $hargaFinal,
+                'jumlah'       => 1
+            ]);
+        }
+        // 3. Arahkan ke halaman keranjang
+        return redirect('/keranjang')->with('success', 'Produk masuk keranjang! ✨');
+    }
+
+    public function updateJumlah(Request $request, $id)
+    {
+        $aksi = $request->aksi; // 'tambah' atau 'kurang'
+        $item = DB::table('detail_keranjang')->where('id_detail_keranjang', $id)->first();
+
+        if ($item) {
+            $jumlahBaru = ($aksi == 'tambah') ? $item->jumlah + 1 : $item->jumlah - 1;
+
+            if ($jumlahBaru <= 0) {
+                DB::table('detail_keranjang')->where('id_detail_keranjang', $id)->delete();
+            } else {
+                DB::table('detail_keranjang')->where('id_detail_keranjang', $id)->update(['jumlah' => $jumlahBaru]);
+            }
+        }
+        return back();
+    }
+
+    public function checkout(Request $request)
+    {
+        // 1. Ambil data keranjang
+        $keranjang = DB::table('detail_keranjang')->where('id_keranjang', 1)->get();
+        
+        if ($keranjang->isEmpty()) {
+            return back()->with('error', 'Keranjang kosong!');
+        }
+        
+        // 2. Hitung total harga dan tambah ongkir 15.000 sesuai dengan tampilan di keranjang
+        $subtotal = $keranjang->sum(fn($item) => $item->harga * $item->jumlah);
+        $total = $subtotal + 15000;
+
+        // ✨ FITUR BARU: Gabungkan Dropdown Wilayah dan Detail Alamat 
+        $alamatLengkap = $request->wilayah . ' - ' . $request->alamat_detail;
+
+        // 3. Simpan ke tabel 'pesanan'
+        $idPesanan = DB::table('pesanan')->insertGetId([
+            'id_pelanggan'    => auth()->id(),
+            'tanggal_pesanan' => now()->timestamp, // Atau gunakan format date('Y-m-d')
+            'total_harga'     => $total,
+            'alamat'          => $alamatLengkap, // Masukkan variabel gabungan wilayah & alamat ke DB
+            'no_telepon'      => $request->no_telepon ?? '-',
+            'status'          => 'Pending'
         ]);
+        
+        // 4. Simpan ke tabel 'detail_pesanan' (Daftar produknya)
+        foreach ($keranjang as $item) {
+            DB::table('detail_pesanan')->insert([
+                'id_pesanan' => $idPesanan, // Mengambil ID dari tabel pesanan di atas
+                'id_produk'  => $item->id_produk,
+                'jumlah'     => $item->jumlah,
+                'subtotal'   => $item->harga * $item->jumlah
+            ]);
 
-        // Pengurangan stok otomatis
-        DB::table('produk')
-            ->where('id_produk', $item->id_produk)
-            ->decrement('stok', $item->jumlah);
+            // Pengurangan stok otomatis
+            DB::table('produk')
+                ->where('id_produk', $item->id_produk)
+                ->decrement('stok', $item->jumlah);
+        }
+
+        // 5. Hapus keranjang
+        DB::table('detail_keranjang')->where('id_keranjang', 1)->delete();
+
+        // =========================================================
+        // ✨ ESTIMASI PENGIRIMAN
+        // =========================================================
+        $estimasiAwal = now()->addDays(2)->format('d M Y');
+        $estimasiAkhir = now()->addDays(4)->format('d M Y');
+        
+        $pesanSukses = "Checkout berhasil! Pesanan sedang diproses. 🚚 Estimasi paket tiba: $estimasiAwal s/d $estimasiAkhir.";
+
+        return redirect()->route('pelanggan.dashboard')->with('success', $pesanSukses);
     }
 
-    // 5. Hapus keranjang
-    DB::table('detail_keranjang')->where('id_keranjang', 1)->delete();
-
-    // =========================================================
-    // ✨ FITUR BARU: ESTIMASI PENGIRIMAN (DITAMBAHKAN DI SINI)
-    // =========================================================
-    $estimasiAwal = now()->addDays(2)->format('d M Y');
-    $estimasiAkhir = now()->addDays(4)->format('d M Y');
-    
-    $pesanSukses = "Checkout berhasil! Pesanan sedang diproses. 🚚 Estimasi paket tiba: $estimasiAwal s/d $estimasiAkhir.";
-
-    return redirect()->route('pelanggan.dashboard')->with('success', $pesanSukses);
-}
-
-public function checkoutForm()
-{
-    // Mengambil data keranjang untuk ditampilkan ringkasannya di halaman checkout
-    $keranjang = DB::table('detail_keranjang')->where('id_keranjang', 1)->get();
-    return view('pelanggan.checkout', compact('keranjang'));
-}
+    public function checkoutForm()
+    {
+        // Mengambil data keranjang untuk ditampilkan ringkasannya di halaman checkout
+        $keranjang = DB::table('detail_keranjang')->where('id_keranjang', 1)->get();
+        return view('pelanggan.checkout', compact('keranjang'));
+    }
 }

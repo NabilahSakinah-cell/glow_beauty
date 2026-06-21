@@ -57,12 +57,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/keranjang/tambah/{id}', [ProdukController::class, 'tambahKeranjang'])->name('keranjang.tambah');
     Route::post('/keranjang/update/{id}', [ProdukController::class, 'updateJumlah'])->name('keranjang.update');
     
-    // ✨ INI TAMBAHANNYA: Route untuk membuka halaman Form Checkout (GET)
     Route::get('/keranjang/checkout', [ProdukController::class, 'checkoutForm'])->name('keranjang.checkout.form');
-    
-    // Route untuk memproses data Checkout (POST)
     Route::post('/keranjang/checkout', [ProdukController::class, 'checkout'])->name('keranjang.checkout');
 
+    // Fitur Lacak Paket
+    Route::get('/pelanggan/lacak', [ProdukController::class, 'lacakPaket'])->name('pelanggan.lacak');
+    
+    // ✨ TAMBAHAN: Route untuk Halaman Profil Pengguna
+    Route::get('/pelanggan/profil', [ProdukController::class, 'profil'])->name('pelanggan.profil');
 });
 
 
