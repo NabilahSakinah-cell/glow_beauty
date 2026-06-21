@@ -86,10 +86,7 @@ Route::post('/login-admin', [AdminController::class, 'login']);
 
 Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 
-Route::get('/admin/pesanan', function () {
-    $pesanan = [];
-    return view('admin.pesanan', compact('pesanan'));
-})->name('admin.pesanan');
+Route::get('/admin/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
 
 // Kelola Produk & Stok
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
