@@ -54,6 +54,16 @@
 
     </div>
 
+   @if(session('success'))
+    <div class="bg-green-100 text-green-700 p-4 rounded mb-4">
+        {{ session('success') }}
+    </div>
+@endif
+
+<table class="...">
+   ...
+</table>
+
     <!-- Statistik -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-6">
         <div class="bg-white rounded-2xl p-5 shadow-lg border border-yellow-100">
@@ -96,36 +106,41 @@
     </div>
 
     <!-- Filter -->
-    <div class="bg-white rounded-3xl p-5 mb-6 border border-rose-100 shadow-lg">
+   <form action="{{ route('admin.pesanan') }}" method="GET" class="bg-white rounded-3xl p-5 mb-6 border border-rose-100 shadow-lg">
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
 
             <input
                 type="text"
-                placeholder="🔍 Cari ID Pesanan atau Nama Pelanggan..."
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="🔍 Cari ID Pesanan..."
                 class="border border-rose-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-300 focus:outline-none">
 
-            <select
-                class="border border-rose-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-300 focus:outline-none">
-                <option>Semua Status</option>
-                <option>Pending</option>
-                <option>Diproses</option>
-                <option>Dikirim</option>
-                <option>Selesai</option>
+            <select name="status" class="border border-rose-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-300 focus:outline-none">
+                <option value="">Semua Status</option>
+                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                <option value="Dikirim" {{ request('status') == 'Dikirim' ? 'selected' : '' }}>Dikirim</option>
+                <option value="Selesai" {{ request('status') == 'Selesai' ? 'selected' : '' }}>Selesai</option>
             </select>
 
             <input
                 type="date"
+                name="tanggal"
+                value="{{ request('tanggal') }}"
                 class="border border-rose-200 rounded-xl p-3 focus:ring-2 focus:ring-rose-300 focus:outline-none">
 
-            <button
-                class="bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-semibold transition-all duration-200 shadow-md">
-                📊 Export Data
-            </button>
+            <div class="flex gap-2">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl font-semibold w-full">Cari</button>
+                
+                <button type="submit" name="export" value="true" class="bg-rose-500 hover:bg-rose-600 text-white p-3 rounded-xl font-semibold w-full shadow-md">
+                    📊 Export
+                </button>
+            </div>
 
         </div>
-
-    </div>
+    </form>
 
     <!-- Tabel Pesanan -->
     <div class="bg-white rounded-3xl overflow-hidden border border-rose-100 shadow-xl shadow-rose-100/50">
@@ -188,30 +203,36 @@
                             Rp {{ number_format($item->total_harga ?? 0, 0, ',', '.') }}
                         </td>
 
-                        <td class="p-4 text-center">
+                        {{-- Kolom Status --}}
+            <td class="p-4 text-center">
+              @php
+        $statusColors = [
+            'Pending'  => 'bg-amber-50 text-amber-700 border-amber-100',
+            'Diproses' => 'bg-blue-50 text-blue-700 border-blue-100',
+            'Dikirim'  => 'bg-pink-50 text-pink-700 border-pink-100',
+            'Selesai'  => 'bg-green-50 text-green-700 border-green-100'
+        ];
+        $colorClass = $statusColors[$item->status] ?? 'bg-gray-50 text-gray-700 border-gray-100';
+               @endphp
+          <span class="{{ $colorClass }} text-xs px-3 py-1 rounded-full font-medium border">
+        {{ $item->status }}
+          </span>
+        </td>
 
-                            <span class="bg-amber-50 text-amber-700 text-xs px-3 py-1 rounded-full font-medium border border-amber-100">
-                                Pending
-                            </span>
-
-                        </td>
-
-                        <td class="p-4">
-
-                            <div class="flex justify-center gap-2">
-
-                                <button class="bg-rose-100 hover:bg-rose-500 hover:text-white text-rose-600 px-3 py-2 rounded-lg text-xs font-semibold transition">
-                                    Detail
-                                </button>
-
-                                <button class="bg-blue-100 hover:bg-blue-500 hover:text-white text-blue-600 px-3 py-2 rounded-lg text-xs font-semibold transition">
-                                    Update
-                                </button>
-
-                            </div>
-
-                        </td>
-
+{{-- Kolom Aksi --}}
+<td class="p-4">
+    <div class="flex justify-center gap-2">
+        <a href="{{ route('admin.pesanan.detail', $item->id_pesanan) }}" 
+           class="bg-rose-100 hover:bg-rose-500 hover:text-white text-rose-600 px-3 py-2 rounded-lg text-xs font-semibold transition">
+            Detail
+        </a>
+        <a href="{{ route('admin.pesanan.edit', $item->id_pesanan) }}" 
+           class="bg-blue-100 hover:bg-blue-500 hover:text-white text-blue-600 px-3 py-2 rounded-lg text-xs font-semibold transition">
+            Update
+        </a>
+    </div>
+</td>
+                    
                     </tr>
 
                 @empty

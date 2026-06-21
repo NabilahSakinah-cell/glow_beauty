@@ -94,22 +94,121 @@ class AdminController extends Controller
         return view('admin.stok'); 
     }
 
-    public function pesanan() {
-        if (!session('admin_logged_in')) return redirect('/login-admin');
+    public function pesanan(Request $request) {
+    if (!session('admin_logged_in')) return redirect('/login-admin');
 
-        // Mengambil data pesanan saja (tanpa join agar tidak error)
-        $pesanan = DB::table('pesanan')->orderBy('id_pesanan', 'desc')->get();
+    // 1. Buat Query Dasar
+    $query = DB::table('pesanan')->orderBy('id_pesanan', 'desc');
 
-        // Statistik tetap sama
-        $stats = [
-            'baru'    => DB::table('pesanan')->where('status', 'Pending')->count(),
-            'proses'  => DB::table('pesanan')->where('status', 'Diproses')->count(),
-            'dikirim' => DB::table('pesanan')->where('status', 'Dikirim')->count(),
-            'selesai' => DB::table('pesanan')->where('status', 'Selesai')->count(),
-        ];
-
-        return view('admin.pesanan', compact('pesanan', 'stats'));
+    // 2. Filter Pencarian (Search)
+    if ($request->filled('search')) {
+        $query->where('id_pesanan', 'like', '%' . $request->search . '%');
     }
+
+    // 3. Filter Status
+    if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
+    // 4. Filter Tanggal
+    if ($request->filled('tanggal')) {
+        $query->whereDate('created_at', $request->tanggal);
+    }
+
+    // 5. Eksekusi Query
+    $pesanan = $query->get();
+
+    // 6. Logika Export (Jika tombol Export ditekan)
+    if ($request->has('export') && $request->export == 'true') {
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=Laporan_Pesanan.csv"
+        ];
+        
+        $callback = function() use($pesanan) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['ID Pesanan', 'Status', 'Total Harga', 'Tanggal']);
+            foreach ($pesanan as $row) {
+                fputcsv($file, [$row->id_pesanan, $row->status, $row->total_harga, $row->created_at]);
+            }
+            fclose($file);
+        };
+        return response()->stream($callback, 200, $headers);
+    }
+
+    // Statistik (Tetap sama)
+    $stats = [
+        'baru'    => DB::table('pesanan')->where('status', 'Pending')->count(),
+        'proses'  => DB::table('pesanan')->where('status', 'Diproses')->count(),
+        'dikirim' => DB::table('pesanan')->where('status', 'Dikirim')->count(),
+        'selesai' => DB::table('pesanan')->where('status', 'Selesai')->count(),
+    ];
+
+    return view('admin.pesanan', compact('pesanan', 'stats'));
+}
+
+public function detail_pesanan($id) {
+    if (!session('admin_logged_in')) return redirect('/login-admin');
+
+    // Mengambil data pesanan spesifik berdasarkan ID
+    $pesanan = DB::table('pesanan')->where('id_pesanan', $id)->first();
+    
+    if (!$pesanan) return redirect()->back()->with('error', 'Pesanan tidak ditemukan.');
+
+    return view('admin.detail_pesanan', compact('pesanan'));
+}
+
+public function edit_pesanan($id)
+{
+    // 1. Ambil data pesanan utama
+    $pesanan = DB::table('pesanan')->where('id_pesanan', $id)->first();
+
+    // 2. Ambil detail items (asumsi tabelnya 'detail_pesanan')
+    $items = DB::table('detail_pesanan')->where('id_pesanan', $id)->get();
+
+    if (!$pesanan) {
+        return redirect()->back()->with('error', 'Pesanan tidak ditemukan.');
+    }
+
+    // Kirim data pesanan dan items ke view
+    return view('admin.edit_pesanan', compact('pesanan', 'items'));
+}
+
+ public function update_pesanan(Request $request, $id)
+{
+    // 1. Validasi
+    $request->validate([
+        'status' => 'required',
+        'alamat' => 'required',
+        'items'  => 'required|array',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        // 2. Update Header Pesanan (Hapus 'updated_at' di sini)
+        DB::table('pesanan')->where('id_pesanan', $id)->update([
+            'status' => $request->status,
+            'alamat' => $request->alamat,
+            // 'updated_at' => now(), <--- HAPUS BARIS INI
+        ]);
+
+        // 3. Update Detail Item (Pastikan di sini juga tidak ada 'updated_at')
+        foreach ($request->items as $id_detail => $data) {
+            DB::table('detail_pesanan')
+                ->where('id_detail_pesanan', $id_detail)
+                ->update([
+                    'jumlah' => $data['jumlah']
+                    // 'updated_at' => now(), <--- HAPUS JUGA JIKA ADA DI SINI
+                ]);
+        }
+
+        DB::commit();
+        return redirect()->route('admin.pesanan.index')->with('success', 'Pesanan berhasil diupdate!');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return redirect()->back()->with('error', 'Gagal update: ' . $e->getMessage());
+    }
+}
 
     public function simpan_produk(Request $request) {
         // Validasi input yang mendukung nama kolom 'nama'/'nama_produk' dan 'foto'/'gambar'

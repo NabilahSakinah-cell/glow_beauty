@@ -88,6 +88,10 @@ Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.d
 
 Route::get('/admin/pesanan', [AdminController::class, 'pesanan'])->name('admin.pesanan');
 
+Route::get('/admin/pesanan/detail/{id}', [AdminController::class, 'detail_pesanan'])->name('admin.pesanan.detail');
+Route::get('/admin/pesanan/edit/{id}', [AdminController::class, 'edit_pesanan'])->name('admin.pesanan.edit');
+Route::put('/admin/pesanan/update/{id}', [AdminController::class, 'update_pesanan'])->name('admin.pesanan.update');
+
 // Kelola Produk & Stok
 Route::get('/admin/produk/daftar', [ProdukController::class, 'index']); 
 Route::get('/admin/stok', [ProdukController::class, 'stok'])->name('admin.stok'); 
