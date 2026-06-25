@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdminController; 
 use App\Http\Controllers\ProdukController; 
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\PelangganController;
 
 // ==========================================
 // 🟢 JALUR PUBLIK (BISA DIAKSES TANPA LOGIN)
@@ -37,6 +39,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/dashboard', [PelangganController::class, 'index']);
 
 
 // ==========================================
@@ -65,6 +68,9 @@ Route::middleware(['auth'])->group(function () {
     
     // ✨ TAMBAHAN: Route untuk Halaman Profil Pengguna
     Route::get('/pelanggan/profil', [ProdukController::class, 'profil'])->name('pelanggan.profil');
+
+   // Route ini bertugas menangkap data dari form saat tombol "Kirim Rating" ditekan
+    Route::post('/review/store', [ReviewController::class, 'store'])->name('review.store');
 });
 
 

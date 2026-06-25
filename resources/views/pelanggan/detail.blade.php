@@ -102,6 +102,27 @@
             </div>
         </div>
     </div>
+                <div class="mt-10 p-6 bg-white border border-rose-100 rounded-2xl shadow-sm">
+                    <h3 class="font-bold text-lg text-rose-900 mb-4">Berikan Ulasanmu</h3>
+                    <form action="{{ route('review.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="id_produk" value="{{ $produk->id_produk }}">
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                            <select name="rating" class="w-full border-rose-200 rounded-xl p-2">
+                                <option value="5">⭐⭐⭐⭐⭐ - Sangat Bagus</option>
+                                <option value="4">⭐⭐⭐⭐ - Bagus</option>
+                                <option value="3">⭐⭐⭐ - Cukup</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Komentar</label>
+                            <textarea name="komentar" class="w-full border-rose-200 rounded-xl p-2" placeholder="Ceritakan pengalamanmu..."></textarea>
+                        </div>
+                        <button type="submit" class="bg-rose-600 text-white font-bold px-6 py-2 rounded-xl w-full">Kirim Ulasan</button>
+                    </form>
+                </div>
 
 </body>
 </html>

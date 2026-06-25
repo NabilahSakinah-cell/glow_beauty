@@ -8,53 +8,35 @@ use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
     public function login(Request $request)
-    {
-        // 1. Ambil data admin dari database
-        $admin = DB::table('admin')
-            ->where('email', $request->email)
-            ->where('password', $request->password)
-            ->first();
+{
+        // 1. Validasi input
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
+        // 2. Cari di tabel 'admin'
+        // Kita cek email DAN password langsung di database
+        $admin = \Illuminate\Support\Facades\DB::table('admin')
+                    ->where('email', $request->email)
+                    ->where('password', $request->password) 
+                    ->first();
+
+        // 3. Cek apakah admin ditemukan
+        //dd($admin);
         if ($admin) {
+            
+            // 4. Set Session
             session([
                 'admin_logged_in' => true,
                 'admin_nama' => $admin->nama,
-                'admin_id' => $admin->id_admin
+                'admin_id' => $admin->id_admin // SESUAI GAMBAR: nama kolomnya 'id_admin'
             ]);
+
             return redirect('/admin/dashboard');
         }
 
-        // 💡 CEK APAKAH YANG LOGIN ADALAH OWNER VIA FORM ADMIN
-        $owner = DB::table('owner')
-            ->where('email', $request->email)
-            ->where('password', $request->password)
-            ->first();
-
-        if ($owner) {
-            // Jika cocok dengan tabel owner, set session Admin & Owner sekaligus
-            session([
-                'owner_logged_in' => true, 
-                'owner_nama' => $owner->nama,
-                'owner_id' => $owner->id_owner,
-                
-                'admin_logged_in' => true, // Supaya lolos gate dashboard admin
-                'admin_nama' => $owner->nama . ' (Owner Workspace)',
-                'admin_id' => $owner->id_owner
-            ]);
-            return redirect('/admin/dashboard');
-        }
-
-        // 💡 MODE BYPASS UNTUK TESTING (Bawaan Anda):
-        if ($request->email == 'admin@gmail.com' && $request->password == 'admin123') {
-            session([
-                'admin_logged_in' => true,
-                'admin_nama' => 'Glow Admin Toko',
-                'admin_id' => 1
-            ]);
-            return redirect('/admin/dashboard');
-        }
-
-        // Jika salah, kembalikan dengan pesan error
+        // Jika gagal, kembalikan pesan error
         return back()->withErrors(['email' => 'Email atau password Admin salah!']);
     }
 
