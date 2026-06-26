@@ -22,7 +22,6 @@
 
     <div class="max-w-7xl mx-auto animate-fade-in">
         
-        <!-- Header -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
             <div>
                 <h1 class="text-3xl font-serif font-bold text-rose-950">Business Overview ✨</h1>
@@ -34,10 +33,8 @@
             </a>
         </div>
 
-        <!-- 3 Kotak Utama Atas (Sekarang Simetris Berjejer Rapi) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             
-            <!-- Kotak Omzet Bulan Ini -->
             <div class="bg-gradient-to-br from-rose-600 to-rose-700 p-8 rounded-3xl shadow-xl shadow-rose-200 text-white transform hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between">
                 <div>
                     <p class="text-rose-100 font-medium text-xs uppercase tracking-wider">Omzet Bulan Ini 💰</p>
@@ -48,41 +45,36 @@
                 </div>
             </div>
 
-            <!-- Kotak Total Produk -->
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between">
                 <div>
                     <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">Total Produk 📦</p>
-                    <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">120</p>
+                    <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ $total_produk }}</p>
                 </div>
-                <p class="text-xs text-rose-600 font-medium mt-6 underline cursor-pointer italic hover:text-rose-700">
-                    Lihat semua produk →
-                </p>
+                <a href="{{ route('owner.produk.index') }}" class="text-sm text-red-500 hover:underline">
+                      Lihat semua produk →
+                </a>
             </div>
 
-            <!-- Kotak Total Pesanan -->
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between">
                 <div>
                     <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">Total Pesanan 🧾</p>
-                    <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">356</p>
+                    <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ $total_pesanan }}</p>
                 </div>
-                <p class="text-xs text-rose-600 font-medium mt-6 underline cursor-pointer italic hover:text-rose-700">
-                    Lihat semua pesanan →
-                </p>
+               <a href="{{ route('owner.pesanan.index') }}" class="text-sm text-red-500 hover:underline">
+                     Lihat semua pesanan →
+                </a>
             </div>
         </div>
 
-        <!-- Baris Kedua: Total Pelanggan & Top Selling -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <!-- Total Pelanggan -->
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300">
                 <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">Total Pelanggan 👑</p>
-                <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">1.204</p>
-                <p class="text-xs text-rose-600 font-medium mt-4 underline cursor-pointer hover:text-rose-700 italic">
+                <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ number_format($total_pelanggan, 0, ',', '.') }}</p>
+                <a href="/owner/pelanggan" class="text-xs text-rose-600 font-medium mt-4 underline hover:text-rose-700 italic block">
                     Lihat rincian pelanggan baru &rarr;
-                </p>
+                </a>
             </div>
 
-            <!-- Top Selling -->
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30">
                 <h3 class="font-serif font-bold mb-6 text-xl text-rose-950 flex items-center gap-2">
                     Top Selling Products 💄
@@ -100,7 +92,6 @@
             </div>
         </div>
 
-        <!-- Laporan Penjualan & Grafik -->
         <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 mt-8">
             <h3 class="font-serif font-bold mb-6 text-xl text-rose-950">
                 Laporan Penjualan Bulanan 📊
@@ -110,7 +101,6 @@
             </div>
         </div>
 
-        <!-- Pesanan Terbaru (Tabel) -->
         <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 mt-8">
             <h3 class="font-serif font-bold mb-6 text-xl text-rose-950">
                 Pesanan Terbaru 📦
@@ -129,29 +119,29 @@
                     </thead>
 
                     <tbody>
+                        @forelse($pesanan_terbaru as $order)
                         <tr class="border-b hover:bg-slate-50/50 transition">
-                            <td class="p-3 font-medium">#ORD00123</td>
-                            <td class="p-3">Siti Aisyah</td>
-                            <td class="p-3">25 Mei 2024</td>
-                            <td class="p-3">Rp250.000</td>
+                            <td class="p-3 font-medium text-slate-700">#ORD{{ str_pad($order->id_pesanan ?? 0, 5, '0', STR_PAD_LEFT) }}</td>
+                            <td class="p-3 text-slate-700">{{ $order->nama ?? 'Anonim' }}</td>
+                            <td class="p-3 text-slate-500">
+                                {{ isset($order->created_at) ? \Carbon\Carbon::parse($order->created_at)->format('d M Y') : '25 Mei 2024' }}
+                            </td> 
+                            <td class="p-3 font-medium text-slate-700">Rp{{ number_format($order->total_harga ?? 0, 0, ',', '.') }}</td>
                             <td class="p-3">
-                                <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium">
-                                    Selesai
-                                </span>
+                                @if(($order->status ?? 'Diproses') == 'Selesai')
+                                    <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium">Selesai</span>
+                                @else
+                                    <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-medium">Diproses</span>
+                                @endif
                             </td>
                         </tr>
-
-                        <tr class="border-b hover:bg-slate-50/50 transition">
-                            <td class="p-3 font-medium">#ORD00122</td>
-                            <td class="p-3">Budi Santoso</td>
-                            <td class="p-3">25 Mei 2024</td>
-                            <td class="p-3">Rp150.000</td>
-                            <td class="p-3">
-                                <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-medium">
-                                    Diproses
-                                </span>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-400 text-sm italic">
+                                Belum ada data pesanan baru masuk dari database 🛌
                             </td>
                         </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -159,7 +149,6 @@
 
     </div>
 
-    <!-- Chart.js Script -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
     const ctx = document.getElementById('salesChart');

@@ -82,6 +82,8 @@ Route::get('/login-owner', function () {
 });
 Route::post('/login-owner', [OwnerController::class, 'login']);
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner.index');
+Route::get('/owner/produk', [ProdukController::class, 'index'])->name('owner.produk.index');
+Route::get('/owner/pesanan', [AdminController::class, 'pesanan'])->name('owner.pesanan.index');
 
 
 // ==========================================
