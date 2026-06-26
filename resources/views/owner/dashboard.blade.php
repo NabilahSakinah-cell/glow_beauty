@@ -51,7 +51,7 @@
                     <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ $total_produk }}</p>
                 </div>
                 <a href="{{ route('owner.produk.index') }}" class="text-sm text-red-500 hover:underline">
-                      Lihat semua produk →
+                    Lihat semua produk →
                 </a>
             </div>
 
@@ -61,7 +61,7 @@
                     <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ $total_pesanan }}</p>
                 </div>
                <a href="{{ route('owner.pesanan.index') }}" class="text-sm text-red-500 hover:underline">
-                     Lihat semua pesanan →
+                    Lihat semua pesanan →
                 </a>
             </div>
         </div>
@@ -70,8 +70,8 @@
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300">
                 <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">Total Pelanggan 👑</p>
                 <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ number_format($total_pelanggan, 0, ',', '.') }}</p>
-                <a href="/owner/pelanggan" class="text-xs text-rose-600 font-medium mt-4 underline hover:text-rose-700 italic block">
-                    Lihat rincian pelanggan baru &rarr;
+                <a href="{{ route('owner.pelanggan.index') }}" class="text-sm text-red-500 hover:underline">
+                    Lihat rincian pelanggan baru →
                 </a>
             </div>
 
@@ -80,15 +80,19 @@
                     Top Selling Products 💄
                 </h3>
                 <div class="space-y-4">
+                @forelse($top_products as $prod)
                     <div class="flex justify-between items-center border-b border-rose-50 pb-4 hover:bg-rose-50/20 px-2 rounded-xl transition duration-200">
-                        <span class="text-slate-700 font-medium text-sm">Serum Anti-Aging Gold ✨</span>
-                        <span class="bg-rose-50 text-rose-600 font-bold text-xs px-4 py-1.5 rounded-full border border-rose-100">120 terjual</span>
+                        <span class="text-slate-700 font-medium text-sm">{{ $prod->nama_produk }} ✨</span>
+                        <span class="bg-rose-50 text-rose-600 font-bold text-xs px-4 py-1.5 rounded-full border border-rose-100">
+                            {{ $prod->total_terjual }} terjual
+                        </span>
                     </div>
-                    <div class="flex justify-between items-center border-b border-rose-50 pb-4 hover:bg-rose-50/20 px-2 rounded-xl transition duration-200">
-                        <span class="text-slate-700 font-medium text-sm">Sunscreen Lavender Mist ☀️</span>
-                        <span class="bg-rose-50 text-rose-600 font-bold text-xs px-4 py-1.5 rounded-full border border-rose-100">95 terjual</span>
+                @empty
+                    <div class="text-center py-4 text-sm text-slate-400 italic">
+                        Belum ada data transaksi produk terjual 🛌
                     </div>
-                </div>
+                @endforelse
+            </div>
             </div>
         </div>
 
@@ -98,52 +102,6 @@
             </h3>
             <div class="max-h-[300px] flex justify-center">
                 <canvas id="salesChart"></canvas>
-            </div>
-        </div>
-
-        <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 mt-8">
-            <h3 class="font-serif font-bold mb-6 text-xl text-rose-950">
-                Pesanan Terbaru 📦
-            </h3>
-
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b text-slate-400 text-sm">
-                            <th class="text-left p-3 font-medium">ID Pesanan</th>
-                            <th class="text-left p-3 font-medium">Pelanggan</th>
-                            <th class="text-left p-3 font-medium">Tanggal</th>
-                            <th class="text-left p-3 font-medium">Total</th>
-                            <th class="text-left p-3 font-medium">Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @forelse($pesanan_terbaru as $order)
-                        <tr class="border-b hover:bg-slate-50/50 transition">
-                            <td class="p-3 font-medium text-slate-700">#ORD{{ str_pad($order->id_pesanan ?? 0, 5, '0', STR_PAD_LEFT) }}</td>
-                            <td class="p-3 text-slate-700">{{ $order->nama ?? 'Anonim' }}</td>
-                            <td class="p-3 text-slate-500">
-                                {{ isset($order->created_at) ? \Carbon\Carbon::parse($order->created_at)->format('d M Y') : '25 Mei 2024' }}
-                            </td> 
-                            <td class="p-3 font-medium text-slate-700">Rp{{ number_format($order->total_harga ?? 0, 0, ',', '.') }}</td>
-                            <td class="p-3">
-                                @if(($order->status ?? 'Diproses') == 'Selesai')
-                                    <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium">Selesai</span>
-                                @else
-                                    <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-xs font-medium">Diproses</span>
-                                @endif
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-400 text-sm italic">
-                                Belum ada data pesanan baru masuk dari database 🛌
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
             </div>
         </div>
 

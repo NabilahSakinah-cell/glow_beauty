@@ -36,33 +36,33 @@ class OwnerController extends Controller
     }
 
     public function index()
-    {
-        // Pengecekan keamanan session login
-        if (!session('owner_logged_in')) {
-            return redirect('/login-owner'); 
-        }
-
-        // 1. Menghitung total dari tabel 'produk'
-        $total_produk = DB::table('produk')->count();
-
-        // 2. Menghitung total dari tabel 'pesanan'
-        $total_pesanan = DB::table('pesanan')->count();
-
-        // 3. Menghitung total dari tabel 'pelanggan'
-        $total_pelanggan = DB::table('pelanggan')->count();
-
-        // 4. Mengambil 5 pesanan terbaru dari tabel 'pesanan'
-        $pesanan_terbaru = DB::table('pesanan')
-            ->orderBy('id_pesanan', 'desc')
-            ->limit(5)
-            ->get();
-
-        // 5. Kirim semua data ke halaman view dashboard agar tidak Undefined lagi
-        return view('owner.dashboard', compact(
-            'total_produk', 
-            'total_pesanan', 
-            'total_pelanggan', 
-            'pesanan_terbaru'
-        ));
+{
+    // Pengecekan keamanan session login
+    if (!session('owner_logged_in')) {
+        return redirect('/login-owner'); 
     }
+
+    // 1. Hitung total data ringkasan widget
+    $total_produk = DB::table('produk')->count();
+    $total_pesanan = DB::table('pesanan')->count();
+    $total_pelanggan = DB::table('pelanggan')->count();
+
+    // 2. ✨ QUERY OTOMATIS TOP SELLING: Mengambil produk dengan akumulasi pesanan terbanyak
+    // Kita lakukan Join antara tabel detail_pesanan dengan tabel produk
+    $top_products = DB::table('detail_pesanan')
+        ->join('produk', 'detail_pesanan.id_produk', '=', 'produk.id_produk') 
+        ->select('produk.nama_produk', DB::raw('SUM(detail_pesanan.jumlah) as total_terjual'))
+        ->groupBy('detail_pesanan.id_produk', 'produk.nama_produk')
+        ->orderBy('total_terjual', 'desc')
+        ->limit(3) // Mengambil 3 produk teratas
+        ->get();
+
+    // 3. Kirim variabel $top_products ke file Blade
+    return view('owner.dashboard', compact(
+        'total_produk', 
+        'total_pesanan', 
+        'total_pelanggan',
+        'top_products'
+    ));
+}
 }

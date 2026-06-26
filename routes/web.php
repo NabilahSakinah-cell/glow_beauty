@@ -84,7 +84,7 @@ Route::post('/login-owner', [OwnerController::class, 'login']);
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner.index');
 Route::get('/owner/produk', [ProdukController::class, 'index'])->name('owner.produk.index');
 Route::get('/owner/pesanan', [AdminController::class, 'pesanan'])->name('owner.pesanan.index');
-
+Route::get('/owner/pelanggan', [AdminController::class, 'index'])->name('owner.pelanggan.index');
 
 // ==========================================
 // 🛠️ JALUR ADMIN (Manajemen Produk & Katalog)
