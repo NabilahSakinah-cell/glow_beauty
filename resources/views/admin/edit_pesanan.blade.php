@@ -32,13 +32,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-2">Status Pesanan</label>
-                    <select name="status" class="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#591d1d] focus:ring-1 focus:ring-[#591d1d]">
-                        <option value="pending" {{ $pesanan->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="processing" {{ $pesanan->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                        <option value="selesai" {{ $pesanan->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                        <option value="dibatalkan" {{ $pesanan->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                    </select>
+                   <label class="block text-sm font-medium mb-2">Status Pesanan</label>
+                <select name="status" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white">
+                    <option value="Pending" {{ $pesanan->status == 'Pending' ? 'selected' : '' }}>Pending</option>
+                    <option value="Diproses" {{ $pesanan->status == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                    <option value="Dikirim" {{ $pesanan->status == 'Dikirim' ? 'selected' : '' }}>Dikirim</option>
+                    <option value="Selesai" {{ $pesanan->status == 'Selesai' ? 'selected' : '' }}>Selesai</option>
+                </select>
                 </div>
             </div>
 

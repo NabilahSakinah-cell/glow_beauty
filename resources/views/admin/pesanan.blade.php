@@ -162,7 +162,11 @@
                     </th>
 
                     <th class="p-4 border-b border-rose-100">
-                        Pelanggan
+                        Nama Pelanggan
+                    </th>
+
+                    <th class="p-4 border-b border-rose-100">
+                        Tanggal Pesanan
                     </th>
 
                     <th class="p-4 border-b border-rose-100">
@@ -195,8 +199,13 @@
                             #TRX{{ $item->id_pesanan ?? '000' }}
                         </td>
 
+                       
                         <td class="p-4 font-medium text-slate-800">
-                            ID Pelanggan: {{ $item->id_pelanggan }}
+                            {{ $item->nama_pelanggan ?? 'User tidak ditemukan' }}
+                        </td>
+
+                        <td class="p-4 font-medium text-slate-800">
+                            {{ $item->tanggal_pesanan ? date('d M Y', $item->tanggal_pesanan) : 'Tanggal kosong' }}
                         </td>
 
                         <td class="p-4 font-bold text-rose-600">

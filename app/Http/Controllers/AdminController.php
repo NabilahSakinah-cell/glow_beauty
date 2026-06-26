@@ -80,7 +80,10 @@ class AdminController extends Controller
     if (!session('admin_logged_in')) return redirect('/login-admin');
 
     // 1. Buat Query Dasar
-    $query = DB::table('pesanan')->orderBy('id_pesanan', 'desc');
+    $query = DB::table('pesanan')
+    ->leftJoin('users', 'pesanan.id_pelanggan', '=', 'users.id')
+    ->select('pesanan.*', 'users.name as nama_pelanggan')
+    ->orderBy('pesanan.id_pesanan', 'desc');
 
     // 2. Filter Pencarian (Search)
     if ($request->filled('search')) {
@@ -194,8 +197,8 @@ public function edit_pesanan($id)
         return redirect()->route('admin.pesanan.index')->with('success', 'Pesanan berhasil diupdate!');
     } catch (\Exception $e) {
         DB::rollBack();
-        return redirect()->back()->with('error', 'Gagal update: ' . $e->getMessage());
-    }
+       return redirect()->route('admin.pesanan')->with('success', 'Status pesanan berhasil diperbarui!');
+}
 }
 
     public function simpan_produk(Request $request) {
