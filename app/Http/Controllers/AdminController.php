@@ -96,8 +96,18 @@ class AdminController extends Controller
     }
 
     // 4. Filter Tanggal
+    // Filter Tanggal
     if ($request->filled('tanggal')) {
-        $query->whereDate('created_at', $request->tanggal);
+        $tanggalInput = $request->tanggal;
+        $tanggalTeks = date('d M Y', strtotime($tanggalInput));
+        $awalHari = strtotime($tanggalInput . ' 00:00:00');
+        $akhirHari = strtotime($tanggalInput . ' 23:59:59');
+
+        $query->where(function($q) use ($tanggalInput, $tanggalTeks, $awalHari, $akhirHari) {
+            $q->whereDate('pesanan.tanggal_pesanan', $tanggalInput)
+              ->orWhere('pesanan.tanggal_pesanan', 'like', '%' . $tanggalTeks . '%')
+              ->orWhereBetween('pesanan.tanggal_pesanan', [$awalHari, $akhirHari]);
+        });
     }
 
     // 5. Eksekusi Query
@@ -320,5 +330,57 @@ public function edit_pesanan($id)
             DB::table('products')->where('id', $id)->delete();
         }
         return redirect('/admin/produk/daftar');
+    }
+
+    public function export()
+{
+    // 1. Ambil data pesanan beserta nama pelanggan (sama seperti fungsi index)
+    $pesanan = DB::table('pesanan')
+        ->leftJoin('users', 'pesanan.id_pelanggan', '=', 'users.id')
+        ->select('pesanan.*', 'users.name as nama_pelanggan')
+        ->orderBy('pesanan.id_pesanan', 'desc')
+        ->get();
+
+    // 2. Buat nama file otomatis sesuai waktu download
+    $filename = "Laporan_Pesanan_" . date('Y-m-d_H-i-s') . ".csv";
+
+    // 3. Buka "pipa" untuk mengalirkan data
+    $handle = fopen('php://output', 'w');
+
+    // 4. Buat Baris Pertama (Judul Kolom)
+    // Sesuaikan dengan judul di tabel layar Anda
+    fputcsv($handle, ['Nota', 'Nama Pelanggan', 'Tanggal Pesanan', 'Total Bayar', 'Status'], ';');
+
+    // 5. Masukkan isi datanya baris demi baris
+    foreach ($pesanan as $row) {
+        
+        // Cek jika tanggal berupa timestamp (angka) atau string biasa
+        // Jika di database berupa timestamp, biarkan seperti ini. Jika tidak, sesuaikan.
+        $tanggal = is_numeric($row->tanggal_pesanan) 
+                    ? date('d M Y', $row->tanggal_pesanan) 
+                    : $row->tanggal_pesanan;
+
+        fputcsv($handle, [
+            '#TRX' . $row->id_pesanan,
+            $row->nama_pelanggan ?? '-',
+            $tanggal,
+            $row->total_harga ?? 0,
+            $row->status
+        ], ';');
+    }
+
+    fputcsv($handle, ['', '', '', '', ''], ';'); 
+
+    $totalSemua = $pesanan->sum('total_harga'); 
+
+    fputcsv($handle, ['', '', 'TOTAL PENDAPATAN:', $totalSemua, ''], ';');
+
+    fclose($handle);
+
+    // 6. Kirim file ke browser untuk didownload
+    return response()->stream(function() use ($handle) {}, 200, [
+        'Content-Type' => 'text/csv',
+        'Content-Disposition' => "attachment; filename=\"$filename\"",
+    ]);
     }
 }

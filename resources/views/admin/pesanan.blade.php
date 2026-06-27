@@ -134,9 +134,9 @@
             <div class="flex gap-2">
                 <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl font-semibold w-full">Cari</button>
                 
-                <button type="submit" name="export" value="true" class="bg-rose-500 hover:bg-rose-600 text-white p-3 rounded-xl font-semibold w-full shadow-md">
+                <a href="{{ route('admin.pesanan.export') }}" class="bg-rose-500 hover:bg-rose-600 text-white p-3 px-6 rounded-xl font-semibold flex items-center justify-center gap-2 whitespace-nowrap">
                     📊 Export
-                </button>
+                </a>
             </div>
 
         </div>

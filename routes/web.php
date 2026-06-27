@@ -110,3 +110,4 @@ Route::post('/admin/produk/simpan', [ProdukController::class, 'store'])->name('a
 Route::get('/admin/produk/edit/{id}', [ProdukController::class, 'edit']); 
 Route::post('/admin/produk/update/{id}', [ProdukController::class, 'update_produk']);
 Route::get('/admin/produk/hapus/{id}', [ProdukController::class, 'hapus_produk']);
+Route::get('/admin/pesanan/export', [App\Http\Controllers\AdminController::class, 'export'])->name('admin.pesanan.export');
