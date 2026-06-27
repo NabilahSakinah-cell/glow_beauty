@@ -35,15 +35,15 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             
-            <div class="bg-gradient-to-br from-rose-600 to-rose-700 p-8 rounded-3xl shadow-xl shadow-rose-200 text-white transform hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between">
-                <div>
-                    <p class="text-rose-100 font-medium text-xs uppercase tracking-wider">Omzet Bulan Ini 💰</p>
-                    <p class="text-4xl font-bold mt-2 font-serif">Rp 45.200.000</p>
-                </div>
-                <div class="mt-6 inline-block bg-white/20 px-3 py-1.5 rounded-full text-xs font-medium text-center">
-                    ↑ 12% Performa meningkat bisnis kamu
-                </div>
+           <div class="bg-gradient-to-br from-rose-600 to-rose-700 p-8 rounded-3xl shadow-xl shadow-rose-200 text-white transform hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between">
+            <div>
+                <p class="text-rose-100 font-medium text-xs uppercase tracking-wider">Omzet Bulan Ini 💰</p>
+                <p class="text-4xl font-bold mt-2 font-serif">Rp {{ number_format($omzet_bulan_ini, 0, ',', '.') }}</p>
             </div>
+            <div class="mt-6 inline-block bg-white/20 px-3 py-1.5 rounded-full text-xs font-medium text-center">
+                ↑ Performa meningkat bisnis kamu
+            </div>
+        </div>
 
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between">
                 <div>
@@ -112,7 +112,7 @@
     const ctx = document.getElementById('salesChart');
 
     // Menerima data array omzet dari Controller secara aman lewat format JSON
-    const dataOmzetRiil = @json($bulanan_omzet);
+    const dataOmzetRiil = JSON.parse('{!! $bulanan_omzet_json !!}');
 
     new Chart(ctx, {
         type: 'bar',

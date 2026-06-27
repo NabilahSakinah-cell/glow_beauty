@@ -36,51 +36,83 @@ class OwnerController extends Controller
     }
 
     public function index()
-{
-    // Pengecekan keamanan session login
-    if (!session('owner_logged_in')) {
-        return redirect('/login-owner'); 
+    {
+        // Pengecekan keamanan session login
+        if (!session('owner_logged_in')) {
+            return redirect('/login-owner'); 
+        }
+
+        // 1. Hitung total data ringkasan widget
+        $total_produk = DB::table('produk')->count();
+        $total_pesanan = DB::table('pesanan')->count();
+        $total_pelanggan = DB::table('pelanggan')->count();
+
+        // 2. Query Top Selling Products
+        $top_products = DB::table('detail_pesanan')
+            ->join('produk', 'detail_pesanan.id_produk', '=', 'produk.id_produk') 
+            ->select('produk.nama_produk', DB::raw('SUM(detail_pesanan.jumlah) as total_terjual'))
+            ->groupBy('detail_pesanan.id_produk', 'produk.nama_produk')
+            ->orderBy('total_terjual', 'desc')
+            ->limit(3)
+            ->get();
+
+        // 3. 📊 QUERY DATA GRAFIK (Disinkronkan: Hanya pesanan yang berstatus 'selesai')
+      $all_sales = DB::table('pesanan')->get();
+
+        $bulanan_omzet = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+        foreach ($all_sales as $data) {
+            // Ambil status dan ubah ke huruf kecil untuk dicocokkan
+            $status_pesanan = isset($data->status) ? strtolower(trim($data->status)) : '';
+            
+            if ($status_pesanan === 'selesai') {
+                // Ambil nilai timestamp angka panjang dari database kamu
+                $timestamp = $data->tanggal_pesanan ?? $data->tanggal ?? null;
+                
+                if (!empty($timestamp)) {
+                    // Paksa ubah angka Unix Timestamp menjadi nomor bulan murni (1-12)
+                    $bulan_angka = (int)date('n', $timestamp); 
+                    
+                    $indeksBulan = $bulan_angka - 1; // Array mulai dari index 0 (Januari = 0)
+                    if ($indeksBulan >= 0 && $indeksBulan < 12) {
+                        $bulanan_omzet[$indeksBulan] += (int)$data->total_harga;
+                    }
+                }
+            }
+        }
+
+        // Simpan dalam format JSON murni untuk dilempar ke Javascript
+        $bulanan_omzet_json = json_encode(array_values($bulanan_omzet));
+
+        // 4. 💰 HITUNG OMZET (Menggunakan cara yang sukses terhubung)
+        $omzet_bulan_ini = DB::table('pesanan')
+            ->where('status', 'selesai')
+            ->sum('total_harga');
+
+        // 5. Mengirim semua variabel ke tampilan dashboard
+        return view('owner.dashboard', compact(
+            'total_produk', 
+            'total_pesanan', 
+            'total_pelanggan',
+            'top_products',
+            'bulanan_omzet_json',
+            'omzet_bulan_ini' 
+        ));
     }
 
-    // 1. Hitung total data ringkasan widget
-    $total_produk = DB::table('produk')->count();
-    $total_pesanan = DB::table('pesanan')->count();
-    $total_pelanggan = DB::table('pelanggan')->count();
+    public function pesanan()
+    {
+        // Pastikan owner sudah login
+        if (!session('owner_logged_in')) {
+            return redirect('/login-owner'); 
+        }
 
-    // 2. Query Top Selling Products
-    $top_products = DB::table('detail_pesanan')
-        ->join('produk', 'detail_pesanan.id_produk', '=', 'produk.id_produk') 
-        ->select('produk.nama_produk', DB::raw('SUM(detail_pesanan.jumlah) as total_terjual'))
-        ->groupBy('detail_pesanan.id_produk', 'produk.nama_produk')
-        ->orderBy('total_terjual', 'desc')
-        ->limit(3)
-        ->get();
+        // Ambil data semua pesanan dari database
+        $semua_pesanan = DB::table('pesanan')
+            ->orderBy('tanggal_pesanan', 'desc')
+            ->get();
 
-    // 3. ✨ QUERY DATA GRAFIK: Ambil omzet riil per bulan untuk tahun ini
-    $sales_data = DB::table('pesanan')
-        ->select(
-            DB::raw('MONTH(tanggal_pesanan) as bulan'),
-            DB::raw('SUM(total_harga) as total_omzet')
-        )
-        ->whereYear('tanggal_pesanan', date('Y')) // Mengambil data tahun berjalan (2026)
-        ->groupBy(DB::raw('MONTH(tanggal_pesanan)'))
-        ->orderBy('bulan', 'asc')
-        ->pluck('total_omzet', 'bulan')
-        ->toArray();
-
-    // Petakan data ke dalam susunan 12 bulan (Jan - Des) agar urut dan bernilai 0 jika bulan tersebut belum ada transaksi
-    $bulanan_omzet = [];
-    for ($m = 1; $m <= 12; $m++) {
-        $bulanan_omzet[] = $sales_data[$m] ?? 0; 
+        // Kirim data ke halaman khusus pesanan owner
+        return view('owner.pesanan', compact('semua_pesanan'));
     }
-
-    // 4. Kirim semua variabel ke file Blade
-    return view('owner.dashboard', compact(
-        'total_produk', 
-        'total_pesanan', 
-        'total_pelanggan',
-        'top_products',
-        'bulanan_omzet' // Dikirim ke blade untuk dibaca Chart.js
-    ));
-}
 }
