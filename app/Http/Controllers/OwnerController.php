@@ -47,22 +47,40 @@ class OwnerController extends Controller
     $total_pesanan = DB::table('pesanan')->count();
     $total_pelanggan = DB::table('pelanggan')->count();
 
-    // 2. ✨ QUERY OTOMATIS TOP SELLING: Mengambil produk dengan akumulasi pesanan terbanyak
-    // Kita lakukan Join antara tabel detail_pesanan dengan tabel produk
+    // 2. Query Top Selling Products
     $top_products = DB::table('detail_pesanan')
         ->join('produk', 'detail_pesanan.id_produk', '=', 'produk.id_produk') 
         ->select('produk.nama_produk', DB::raw('SUM(detail_pesanan.jumlah) as total_terjual'))
         ->groupBy('detail_pesanan.id_produk', 'produk.nama_produk')
         ->orderBy('total_terjual', 'desc')
-        ->limit(3) // Mengambil 3 produk teratas
+        ->limit(3)
         ->get();
 
-    // 3. Kirim variabel $top_products ke file Blade
+    // 3. ✨ QUERY DATA GRAFIK: Ambil omzet riil per bulan untuk tahun ini
+    $sales_data = DB::table('pesanan')
+        ->select(
+            DB::raw('MONTH(tanggal_pesanan) as bulan'),
+            DB::raw('SUM(total_harga) as total_omzet')
+        )
+        ->whereYear('tanggal_pesanan', date('Y')) // Mengambil data tahun berjalan (2026)
+        ->groupBy(DB::raw('MONTH(tanggal_pesanan)'))
+        ->orderBy('bulan', 'asc')
+        ->pluck('total_omzet', 'bulan')
+        ->toArray();
+
+    // Petakan data ke dalam susunan 12 bulan (Jan - Des) agar urut dan bernilai 0 jika bulan tersebut belum ada transaksi
+    $bulanan_omzet = [];
+    for ($m = 1; $m <= 12; $m++) {
+        $bulanan_omzet[] = $sales_data[$m] ?? 0; 
+    }
+
+    // 4. Kirim semua variabel ke file Blade
     return view('owner.dashboard', compact(
         'total_produk', 
         'total_pesanan', 
         'total_pelanggan',
-        'top_products'
+        'top_products',
+        'bulanan_omzet' // Dikirim ke blade untuk dibaca Chart.js
     ));
 }
 }

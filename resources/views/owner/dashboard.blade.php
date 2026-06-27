@@ -111,21 +111,35 @@
     <script>
     const ctx = document.getElementById('salesChart');
 
+    // Menerima data array omzet dari Controller secara aman lewat format JSON
+    const dataOmzetRiil = @json($bulanan_omzet);
+
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-            dataType: 'json',
+            // Label lengkap dari Januari hingga Desember
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
             datasets: [{
                 label: 'Penjualan',
-                data: [10000000, 12500000, 15200000, 7500000, 11000000, 14000000],
+                data: dataOmzetRiil, // ✨ Menggunakan data dinamis dari database Anda
                 backgroundColor: '#e11d48',
                 borderRadius: 8
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        // Memformat angka di sumbu Y menjadi mata uang Rupiah secara otomatis
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
         }
     });
     </script>
