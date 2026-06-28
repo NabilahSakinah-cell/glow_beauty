@@ -45,16 +45,23 @@ class OwnerController extends Controller
         // 1. Hitung total data ringkasan widget
         $total_produk = DB::table('produk')->count();
         $total_pesanan = DB::table('pesanan')->count();
-        $total_pelanggan = DB::table('pelanggan')->count();
+        $cek_pelanggan = DB::table('pelanggan')->count();
+        if ($cek_pelanggan == 0) {
+            $total_pelanggan = DB::table('pesanan')->distinct('id_pelanggan')->count('id_pelanggan');
+        } else {
+            $total_pelanggan = $cek_pelanggan;
+        }
 
         // 2. Query Top Selling Products
-        $top_products = DB::table('detail_pesanan')
-            ->join('produk', 'detail_pesanan.id_produk', '=', 'produk.id_produk') 
-            ->select('produk.nama_produk', DB::raw('SUM(detail_pesanan.jumlah) as total_terjual'))
-            ->groupBy('detail_pesanan.id_produk', 'produk.nama_produk')
-            ->orderBy('total_terjual', 'desc')
-            ->limit(3)
-            ->get();
+        $top_products = DB::table('detail_pesanan') // Sesuaikan dengan nama tabel detail/item pesananmu
+        ->join('pesanan', 'detail_pesanan.id_pesanan', '=', 'pesanan.id_pesanan')
+        ->join('produk', 'detail_pesanan.id_produk', '=', 'produk.id_produk') // Sesuaikan nama kolom ID produk
+        ->where('pesanan.status', 'selesai')
+        ->select('produk.nama_produk', DB::raw('SUM(detail_pesanan.jumlah) as total_terjual')) // Sesuaikan kolom jumlah/quantity
+        ->groupBy('produk.id_produk', 'produk.nama_produk')
+        ->orderBy('total_terjual', 'desc')
+        ->take(3) // Ambil 3 produk teratas
+        ->get();
 
         // 3. 📊 QUERY DATA GRAFIK (Disinkronkan: Hanya pesanan yang berstatus 'selesai')
       $all_sales = DB::table('pesanan')->get();
@@ -114,5 +121,36 @@ class OwnerController extends Controller
 
         // Kirim data ke halaman khusus pesanan owner
         return view('owner.pesanan', compact('semua_pesanan'));
+    }
+    public function pelanggan()
+    {
+        // 1. Pastikan owner sudah login terlebih dahulu
+        if (!session('owner_logged_in')) {
+            return redirect('/login-owner'); 
+        }
+
+        // 2. Cek apakah ada data mandiri di tabel pelanggan
+        $cek_pelanggan = DB::table('pelanggan')->count();
+        
+        if ($cek_pelanggan == 0) {
+            // Opsi Paling Aman & Bagus: Grouping ID Pelanggan dari tabel pesanan
+            // Menggunakan MAX() untuk menghindari error 'SQL Strict Mode' pada database
+            $daftar_pelanggan = DB::table('pesanan')
+                ->select(
+                    'id_pelanggan', 
+                    DB::raw('MAX(alamat) as alamat'), 
+                    DB::raw('MAX(no_telepon) as no_telepon'),
+                    DB::raw('MAX(tanggal_pesanan) as transaksi_terakhir')
+                )
+                ->groupBy('id_pelanggan')
+                ->orderBy('transaksi_terakhir', 'desc')
+                ->get();
+        } else {
+            // Jika suatu saat tabel pelanggan sudah memiliki data sendiri, ambil langsung dari sana
+            $daftar_pelanggan = DB::table('pelanggan')->get();
+        }
+
+        // 3. Kirim data yang sudah bersih dan unik ke halaman pelanggan owner
+        return view('owner.pelanggan', compact('daftar_pelanggan'));
     }
 }

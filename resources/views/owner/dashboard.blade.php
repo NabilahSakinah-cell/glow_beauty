@@ -67,14 +67,13 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300">
+            <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30 transform hover:scale-[1.01] transition-all duration-300 max-w-xl">
                 <p class="text-slate-400 font-medium text-xs uppercase tracking-wider">Total Pelanggan 👑</p>
-                <p class="text-4xl font-bold mt-2 text-rose-950 font-serif">{{ number_format($total_pelanggan, 0, ',', '.') }}</p>
-                <a href="{{ route('owner.pelanggan.index') }}" class="text-sm text-red-500 hover:underline">
+                <p class="text-7xl font-bold mt-4 mb-10 text-rose-950 font-serif">{{ number_format($total_pelanggan, 0, ',', '.') }}</p>
+               <a href="/owner/pelanggan" class="text-sm text-red-500 hover:underline">
                     Lihat rincian pelanggan baru →
                 </a>
             </div>
-
             <div class="bg-white p-8 rounded-3xl border border-rose-100 shadow-xl shadow-rose-100/30">
                 <h3 class="font-serif font-bold mb-6 text-xl text-rose-950 flex items-center gap-2">
                     Top Selling Products 💄

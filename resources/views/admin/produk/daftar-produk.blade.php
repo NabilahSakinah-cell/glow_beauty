@@ -23,7 +23,7 @@
         
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div>
-                <a href="/admin/dashboard" class="text-rose-600 hover:text-rose-700 transition flex items-center gap-2 text-sm font-medium transform hover:-translate-x-1 duration-200 mb-2">
+                <a href="{{ url()->previous() }}" class="text-rose-600 hover:text-rose-700 transition flex items-center gap-2 text-sm font-medium transform hover:-translate-x-1 duration-200 mb-2">
                     &larr; Kembali ke Dashboard
                 </a>
                 <h2 class="text-3xl font-bold text-rose-950">Daftar Produk Kosmetik 💄</h2>
