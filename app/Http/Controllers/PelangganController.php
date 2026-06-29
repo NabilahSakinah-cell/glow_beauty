@@ -8,18 +8,18 @@ use Illuminate\Support\Facades\Auth;
 
 class PelangganController extends Controller
 {
-    public function index()
-    {
-        // 1. Ambil ID user yang login
-        $userId = Auth::id();
+public function index()
+{
+    // Mengambil data langsung dari tabel, bypass model
+    $data = DB::table('pesanan')->select('id_pelanggan')->get();
+    
+    // Log ini akan muncul di file storage/logs/laravel.log
+    \Log::info('Daftar ID Pelanggan di database: ' . $data->toJson());
 
-        // 2. Ambil data pesanan (ganti 'pesanan' dengan nama tabelmu jika berbeda)
-        $order = DB::table('pesanan')
-                    ->where('user_id', $userId)
-                    ->latest()
-                    ->first();
-
-        // 3. Kirim datanya ke view 'dashboard'
-        return view('dashboard', compact('order'));
-    }
+    // Coba ambil data ID 14 (Elma) secara paksa sebagai test
+    $order = DB::table('pesanan')->where('id_pelanggan', 14)->first();
+    
+    $produk = DB::table('produk')->get();
+    return view('dashboard', compact('order', 'produk'));
+}
 }
