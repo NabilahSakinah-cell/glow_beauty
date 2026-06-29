@@ -153,4 +153,33 @@ class OwnerController extends Controller
         // 3. Kirim data yang sudah bersih dan unik ke halaman pelanggan owner
         return view('owner.pelanggan', compact('daftar_pelanggan'));
     }
+
+    public function produkIndex()
+    {
+        // Pastikan owner sudah login
+        if (!session('owner_logged_in')) {
+            return redirect('/login-owner'); 
+        }
+
+        // Ambil semua produk
+        $produk = DB::table('produk')->get();
+        
+        // Kirim ke view owner.produk.index
+        return view('owner.produk.index', compact('produk'));
+    }
+
+    public function pesananIndex()
+    {
+        // Pastikan owner sudah login
+        if (!session('owner_logged_in')) {
+            return redirect('/login-owner'); 
+        }
+
+        // Ambil semua pesanan (menggunakan fungsi yang sudah Anda buat sebelumnya)
+        $semua_pesanan = DB::table('pesanan')
+            ->orderBy('tanggal_pesanan', 'desc')
+            ->get();
+
+        return view('owner.pesanan', compact('semua_pesanan'));
+    }
 }

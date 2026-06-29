@@ -25,11 +25,7 @@
             </div>
         @endif
 
-        <div class="mb-8">
-            <a href="/admin/produk/daftar" class="text-rose-600 hover:text-rose-700 transition ...">
-                &larr; Kembali ke Daftar Produk
-            </a>
-            <h2 class="text-3xl font-bold text-rose-950">✏️ Edit Data Produk</h2>
+        
 
     <div class="max-w-3xl mx-auto animate-fade-in">
         

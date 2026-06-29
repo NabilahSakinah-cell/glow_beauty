@@ -71,6 +71,15 @@
 </a>
             </div>
 
+        <div class="group bg-white p-6 rounded-2xl border border-rose-100 hover:border-rose-400 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-xl hover:shadow-rose-100/70">
+        <div class="text-3xl mb-4 inline-block transition-transform duration-300 group-hover:animate-bounce">⭐</div>
+        <h3 class="text-lg font-bold mb-2 text-rose-900 group-hover:text-rose-600 transition-colors">Data Rating</h3>
+        <p class="text-sm text-slate-500 mb-5">Lihat ulasan dan penilaian dari pelanggan untuk produk Anda.</p>
+        <a href="{{ route('admin.reviews') }}" class="inline-block w-full text-center bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium py-2.5 rounded-xl transition-all duration-300 transform group-hover:scale-[1.02] active:scale-95 shadow-sm shadow-rose-200">
+            Lihat Rating
+        </a>
+    </div>
+
         </div>
     </div>
 </body>

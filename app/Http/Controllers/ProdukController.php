@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Produk;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -176,29 +177,21 @@ class ProdukController extends Controller
     // 👤 BAGIAN PELANGGAN (KATALOG & DETAIL)
     // ==========================================
 
-    public function indexPelanggan(Request $request)
-    {    
-        $query = DB::table('produk');
-        
-        if ($request->has('search') && $request->search != '') {
-            $searchTerm = '%' . $request->search . '%';
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('nama_produk', 'like', $searchTerm)
-                ->orWhere('deskripsi_produk', 'like', $searchTerm); 
-            });
-        }
+   public function indexpelanggan(Request $request)
+    {
+        // 1. Ambil data produk
+        $produk = Produk::all(); 
 
-        if ($request->has('kategori') && $request->kategori != '') {
-            $query->where('kategori', $request->kategori);
-        }
+        // 2. Ambil data pesanan
+        $order = \DB::table('pesanan')
+                    ->where('id_pelanggan', \Auth::id())
+                    ->orderBy('id_pesanan', 'desc')
+                    ->first();
+                    
+        $status = $order ? strtolower(trim($order->status)) : 'kosong';
 
-        if ($request->has('harga_max') && $request->harga_max != '') {
-            $query->where('harga', '<=', $request->harga_max);
-        }
-
-        $produk = $query->get();
-
-        return view('pelanggan.dashboard', compact('produk'));
+        // 3. Kirim status DAN order ke view (TAMBAHKAN 'order' DI SINI)
+        return view('pelanggan.dashboard', compact('produk', 'status', 'order'));
     }
 
     public function detail($id)
