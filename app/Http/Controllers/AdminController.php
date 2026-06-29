@@ -175,40 +175,24 @@ public function edit_pesanan($id)
     return view('admin.edit_pesanan', compact('pesanan', 'items'));
 }
 
- public function update_pesanan(Request $request, $id)
+public function update_pesanan(Request $request, $id)
 {
-    // 1. Validasi
     $request->validate([
         'status' => 'required',
         'alamat' => 'required',
-        'items'  => 'required|array',
     ]);
 
-    DB::beginTransaction();
     try {
-        // 2. Update Header Pesanan (Hapus 'updated_at' di sini)
         DB::table('pesanan')->where('id_pesanan', $id)->update([
             'status' => $request->status,
             'alamat' => $request->alamat,
-            // 'updated_at' => now(), <--- HAPUS BARIS INI
         ]);
 
-        // 3. Update Detail Item (Pastikan di sini juga tidak ada 'updated_at')
-        foreach ($request->items as $id_detail => $data) {
-            DB::table('detail_pesanan')
-                ->where('id_detail_pesanan', $id_detail)
-                ->update([
-                    'jumlah' => $data['jumlah']
-                    // 'updated_at' => now(), <--- HAPUS JUGA JIKA ADA DI SINI
-                ]);
-        }
-
-        DB::commit();
-        return redirect()->route('admin.pesanan.index')->with('success', 'Pesanan berhasil diupdate!');
+        return redirect()->route('admin.pesanan')->with('success', 'Status berhasil diupdate!');
     } catch (\Exception $e) {
-        DB::rollBack();
-       return redirect()->route('admin.pesanan')->with('success', 'Status pesanan berhasil diperbarui!');
-}
+        // Tambahkan ini untuk melihat errornya jika gagal
+        return redirect()->back()->with('error', 'Gagal update: ' . $e->getMessage());
+    }
 }
 
     public function simpan_produk(Request $request) {

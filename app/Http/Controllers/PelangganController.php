@@ -8,18 +8,25 @@ use Illuminate\Support\Facades\Auth;
 
 class PelangganController extends Controller
 {
-    public function index()
-    {
-        // 1. Ambil ID user yang login
-        $userId = Auth::id();
+   public function index()
+{
+    $userId = Auth::id();
 
-        // 2. Ambil data pesanan (ganti 'pesanan' dengan nama tabelmu jika berbeda)
+    // Mengambil pesanan terbaru yang BELUM selesai
+    $order = DB::table('pesanan')
+                ->where('id_pelanggan', $userId)
+                ->where('status', '!=', 'Selesai') // Abaikan yang sudah selesai
+                ->latest()
+                ->first();
+                
+    // Jika tidak ada pesanan yang belum selesai, ambil yang paling terakhir (apapun statusnya)
+    if (!$order) {
         $order = DB::table('pesanan')
-                    ->where('user_id', $userId)
+                    ->where('id_pelanggan', $userId)
                     ->latest()
                     ->first();
-
-        // 3. Kirim datanya ke view 'dashboard'
-        return view('dashboard', compact('order'));
     }
+
+    return view('dashboard', compact('order'));
+}
 }

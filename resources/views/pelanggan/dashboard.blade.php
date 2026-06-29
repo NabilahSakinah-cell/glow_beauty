@@ -123,19 +123,25 @@
                 <i class="fa-solid fa-map-location-dot text-rose-500"></i> Status Pengiriman
             </h3>
             <div class="relative border-l-2 border-gray-200 ml-4 space-y-8 mt-4 mb-8">
-                <div class="relative pl-6">
-                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ strtolower($order->status ?? '') == 'selesai' ? 'bg-rose-500' : 'bg-gray-200' }} border-2 border-white"></div>
-                    <p class="text-sm font-bold {{ strtolower($order->status ?? '') == 'selesai' ? 'text-rose-600' : 'text-gray-400' }}">Paket Tiba di Tujuan</p>
-                </div>
-                <div class="relative pl-6">
-                    <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ strtolower($order->status ?? '') == 'dikirim' ? 'bg-rose-500' : 'bg-gray-200' }} border-2 border-white"></div>
-                    <p class="text-sm font-bold {{ strtolower($order->status ?? '') == 'dikirim' ? 'text-rose-600' : 'text-gray-400' }}">Sedang Dikirim</p>
-                </div>
-                <div class="relative pl-6">
-                    <div class="absolute -left-[11px] -top-1 w-5 h-5 rounded-full {{ (strtolower($order->status ?? '') == 'pending' || strtolower($order->status ?? '') == 'diproses') ? 'bg-rose-500' : 'bg-gray-200' }} border-4 border-white shadow-sm"></div>
-                    <p class="text-sm font-bold {{ (strtolower($order->status ?? '') == 'pending' || strtolower($order->status ?? '') == 'diproses') ? 'text-rose-600' : 'text-gray-400' }}">Pesanan Diproses</p>
-                </div>
-            </div>
+        @php
+            $status = strtolower($order->status ?? '');
+        @endphp
+
+        <div class="relative pl-6">
+            <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $status == 'selesai' ? 'bg-rose-500' : 'bg-gray-200' }} border-2 border-white"></div>
+            <p class="text-sm font-bold {{ $status == 'selesai' ? 'text-rose-600' : 'text-gray-400' }}">Paket Tiba di Tujuan</p>
+        </div>
+
+        <div class="relative pl-6">
+            <div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ in_array($status, ['dikirim', 'selesai']) ? 'bg-rose-500' : 'bg-gray-200' }} border-2 border-white"></div>
+            <p class="text-sm font-bold {{ in_array($status, ['dikirim', 'selesai']) ? 'text-rose-600' : 'text-gray-400' }}">Sedang Dikirim</p>
+        </div>
+
+        <div class="relative pl-6">
+            <div class="absolute -left-[11px] -top-1 w-5 h-5 rounded-full {{ in_array($status, ['pending', 'diproses', 'dikirim', 'selesai']) ? 'bg-rose-500' : 'bg-gray-200' }} border-4 border-white shadow-sm"></div>
+            <p class="text-sm font-bold {{ in_array($status, ['pending', 'diproses', 'dikirim', 'selesai']) ? 'text-rose-600' : 'text-gray-400' }}">Pesanan Diproses</p>
+        </div>
+    </div>
             <button onclick="document.getElementById('modal-lacak').classList.add('hidden')" class="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition">Tutup</button>
         </div>
     </div>
