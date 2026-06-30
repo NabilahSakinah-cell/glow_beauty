@@ -18,9 +18,16 @@
                 </h1>
                 <p class="text-slate-400 text-sm mt-1">Daftar pelanggan aktif yang terhubung dengan Glow Beauty</p>
             </div>
-            <a href="{{ url()->previous() }}" class="bg-white hover:bg-rose-600 text-rose-600 hover:text-white px-5 py-2 rounded-full border border-rose-200 text-sm font-semibold transition-all duration-200">
-                ← Kembali ke Dashboard
-            </a>
+            
+            @if(request()->is('owner/*') || request()->is('owner'))
+                <a href="{{ url('/owner') }}" class="bg-white hover:bg-rose-600 text-rose-600 hover:text-white px-5 py-2 rounded-full border border-rose-200 text-sm font-semibold transition-all duration-200">
+                    &larr; Kembali ke Dashboard Owner
+                </a>
+            @else
+                <a href="{{ url('/admin/dashboard') }}" class="bg-white hover:bg-rose-600 text-rose-600 hover:text-white px-5 py-2 rounded-full border border-rose-200 text-sm font-semibold transition-all duration-200">
+                    &larr; Kembali ke Dashboard Admin
+                </a>
+            @endif
         </div>
 
         <div class="overflow-x-auto rounded-2xl border border-rose-50">

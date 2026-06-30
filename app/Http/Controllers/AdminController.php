@@ -9,36 +9,53 @@ class AdminController extends Controller
 {
     public function login(Request $request)
 {
-        // 1. Validasi input
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+    // 1. Validasi input
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    // 2. Cari di tabel 'admin'
+    $admin = \Illuminate\Support\Facades\DB::table('admin')
+                ->where('email', $request->email)
+                ->where('password', $request->password) 
+                ->first();
+
+    // 3. Cek apakah admin ditemukan
+    if ($admin) {
+        // 4. Set Session untuk Admin
+        session([
+            'admin_logged_in' => true,
+            'admin_nama' => $admin->nama,
+            'admin_id' => $admin->id_admin 
         ]);
 
-        // 2. Cari di tabel 'admin'
-        // Kita cek email DAN password langsung di database
-        $admin = \Illuminate\Support\Facades\DB::table('admin')
-                    ->where('email', $request->email)
-                    ->where('password', $request->password) 
-                    ->first();
-
-        // 3. Cek apakah admin ditemukan
-        //dd($admin);
-        if ($admin) {
-            
-            // 4. Set Session
-            session([
-                'admin_logged_in' => true,
-                'admin_nama' => $admin->nama,
-                'admin_id' => $admin->id_admin // SESUAI GAMBAR: nama kolomnya 'id_admin'
-            ]);
-
-            return redirect('/admin/dashboard');
-        }
-
-        // Jika gagal, kembalikan pesan error
-        return back()->withErrors(['email' => 'Email atau password Admin salah!']);
+        return redirect('/admin/dashboard');
     }
+
+    // ------------------------------------------------------------------
+    // JALUR CADANGAN: Jika admin tidak ditemukan, cek apakah ini Owner
+    // ------------------------------------------------------------------
+    $owner = \Illuminate\Support\Facades\DB::table('owner')
+                ->where('email', $request->email)
+                ->where('password', $request->password)
+                ->first();
+
+    if ($owner) {
+        // Set Session Admin palsu/sementara untuk Owner agar bisa masuk ke Dashboard Admin
+        session([
+            'admin_logged_in' => true,          // Supaya lolos middleware/keamanan admin
+            'admin_nama' => $owner->nama . ' (Owner)', // Penanda nama di navbar admin
+            'admin_id' => $owner->id_owner       
+        ]);
+
+        return redirect('/admin/dashboard');
+    }
+    // ------------------------------------------------------------------
+
+    // Jika kedua tabel (admin & owner) gagal, kembalikan pesan error
+    return back()->withErrors(['email' => 'Email atau password salah!']);
+}
 
     // 2. Fungsi Menampilkan Dashboard Admin
     public function index()

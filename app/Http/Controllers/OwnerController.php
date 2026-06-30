@@ -165,7 +165,7 @@ class OwnerController extends Controller
         $produk = DB::table('produk')->get();
         
         // Kirim ke view owner.produk.index
-        return view('owner.produk.index', compact('produk'));
+        return view('admin.produk.daftar-produk', compact('produk'));
     }
 
     public function pesananIndex()

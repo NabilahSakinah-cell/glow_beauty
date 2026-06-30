@@ -86,6 +86,7 @@
     Route::get('/owner', [OwnerController::class, 'index'])->name('owner.index');
     Route::get('/owner/produk', [OwnerController::class, 'produkIndex'])->name('owner.produk.index');
     Route::get('/owner/pesanan', [OwnerController::class, 'pesananIndex'])->name('owner.pesanan.index');
+    Route::get('/owner/pelanggan', [OwnerController::class, 'pelanggan'])->name('owner.pelanggan.index');
 
 
     // ==========================================
