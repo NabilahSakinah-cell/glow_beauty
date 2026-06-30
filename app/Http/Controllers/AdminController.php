@@ -333,55 +333,48 @@ public function update_pesanan(Request $request, $id)
         return redirect('/admin/produk/daftar');
     }
 
-    public function export()
-{
-    // 1. Ambil data pesanan beserta nama pelanggan (sama seperti fungsi index)
-    $pesanan = DB::table('pesanan')
-        ->leftJoin('users', 'pesanan.id_pelanggan', '=', 'users.id')
-        ->select('pesanan.*', 'users.name as nama_pelanggan')
-        ->orderBy('pesanan.id_pesanan', 'desc')
-        ->get();
+  public function export_pesanan()
+    {
+        // 1. Ambil data pesanan
+        $pesanan = DB::table('pesanan')
+            ->leftJoin('users', 'pesanan.id_pelanggan', '=', 'users.id')
+            ->select('pesanan.*', 'users.name as nama_pelanggan')
+            ->orderBy('pesanan.id_pesanan', 'desc')
+            ->get();
 
-    // 2. Buat nama file otomatis sesuai waktu download
-    $filename = "Laporan_Pesanan_" . date('Y-m-d_H-i-s') . ".csv";
+        // 2. Buat nama file
+        $filename = "Laporan_Pesanan_" . date('Y-m-d_H-i-s') . ".csv";
 
-    // 3. Buka "pipa" untuk mengalirkan data
-    $handle = fopen('php://output', 'w');
+        // 3. Definisikan callback
+        $callback = function() use ($pesanan) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['Nota', 'Nama Pelanggan', 'Tanggal Pesanan', 'Total Bayar', 'Status'], ';');
 
-    // 4. Buat Baris Pertama (Judul Kolom)
-    // Sesuaikan dengan judul di tabel layar Anda
-    fputcsv($handle, ['Nota', 'Nama Pelanggan', 'Tanggal Pesanan', 'Total Bayar', 'Status'], ';');
+            foreach ($pesanan as $row) {
+                $tanggal = is_numeric($row->tanggal_pesanan) 
+                            ? date('d M Y', $row->tanggal_pesanan) 
+                            : $row->tanggal_pesanan;
 
-    // 5. Masukkan isi datanya baris demi baris
-    foreach ($pesanan as $row) {
-        
-        // Cek jika tanggal berupa timestamp (angka) atau string biasa
-        // Jika di database berupa timestamp, biarkan seperti ini. Jika tidak, sesuaikan.
-        $tanggal = is_numeric($row->tanggal_pesanan) 
-                    ? date('d M Y', $row->tanggal_pesanan) 
-                    : $row->tanggal_pesanan;
+                fputcsv($handle, [
+                    '#TRX' . $row->id_pesanan,
+                    $row->nama_pelanggan ?? '-',
+                    $tanggal,
+                    $row->total_harga ?? 0,
+                    $row->status
+                ], ';');
+            }
 
-        fputcsv($handle, [
-            '#TRX' . $row->id_pesanan,
-            $row->nama_pelanggan ?? '-',
-            $tanggal,
-            $row->total_harga ?? 0,
-            $row->status
-        ], ';');
-    }
+            fputcsv($handle, ['', '', '', '', ''], ';'); 
+            $totalSemua = $pesanan->sum('total_harga'); 
+            fputcsv($handle, ['', '', 'TOTAL PENDAPATAN:', $totalSemua, ''], ';');
+            
+            fclose($handle);
+        }; 
 
-    fputcsv($handle, ['', '', '', '', ''], ';'); 
-
-    $totalSemua = $pesanan->sum('total_harga'); 
-
-    fputcsv($handle, ['', '', 'TOTAL PENDAPATAN:', $totalSemua, ''], ';');
-
-    fclose($handle);
-
-    // 6. Kirim file ke browser untuk didownload
-    return response()->stream(function() use ($handle) {}, 200, [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => "attachment; filename=\"$filename\"",
-    ]);
+        // 4. Kirim response
+        return response()->stream($callback, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"$filename\"",
+        ]);
     }
 }
